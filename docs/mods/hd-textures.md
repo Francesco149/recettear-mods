@@ -14,7 +14,7 @@ Compare, on the same texture set, only options we can **realistically ship** as 
 | B. runtime shader | in the loader, at texture load or at sampling: xBRZ, ScaleFX, Anime4K, FSR1-EASU-style | quality, frame time / load-time cost, zero setup |
 | C. hybrid | e.g. B by default, A as an opt-in quality pack | combined |
 
-`lame` (RX 7800 XT) is the bench for producing comparisons and timing, not the shipping path. Output:
+cutestation's RTX 5060 8 GB (the owner's play box; owner 2026-11-26) is the bench for producing comparisons and timing, not the shipping path. Output:
 comparison sheets per category + numbers → owner picks. Steps below apply to A (and the alpha/colour-key
 handling to B too).
 
