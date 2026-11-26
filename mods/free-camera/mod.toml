@@ -1,0 +1,36 @@
+[mod]
+id = "free-camera"
+name = "Free Camera"
+version = "0.1.0"
+description = "An extra camera in the shop's own Button-4 cycle (retail → retail low → Free → retail): turn, zoom and raise the view; walking stays camera-relative like retail's own camera. Hands back to the game camera in cinematics (counter, decorating, day end)."
+authors = ["openrecet"]
+target_games = ["recettear_steam_en_1108"]
+# render-only while unrotated (rml det gate); turning steers retail's own yaw target, so walking follows the view
+render_only = true
+
+[loader]
+api = "1.5"
+
+[config.distance]
+type = "float"
+default = 0.0
+min = 0.0
+max = 40.0
+label = "Orbit distance (0 = the game's)"
+
+[config.height]
+type = "float"
+default = 0.0
+min = 0.0
+max = 40.0
+label = "Camera height (0 = the game's)"
+
+[config.yaw]
+type = "float"
+default = 0.0
+label = "Turn (degrees)"
+
+[config.help]
+type = "string"
+default = "on"
+label = "Help box on entry (on / off)"

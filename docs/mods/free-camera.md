@@ -28,3 +28,10 @@ WASD/stick directions — the same as retail's own camera.
 ## Gate (S6)
 `rml det` with Free active and unrotated == vanilla; 4 looked screenshots; counter + customer + day end
 with Free on; owner feel check.
+
+## Status (0.1, S6 — 2026-11-27)
+Built as specified, with: zoom 6–40 / height 2–40 as the only limits (no per-room clamps; the void shows off the ¾
+angle); pad Skill 1/2 turn, 3/4 zoom, 5 reset; `[config]` distance / height / yaw (the last view) / help. Gates:
+`rml det` market-buy-display + day2-shop IDENTICAL with Free active and unrotated (counter cinematic hands back and
+returns); `tests/lua/camera.lua` 16/16. Turning moves retail's yaw target, so a turned Free changes where Recette walks
+(as retail's own camera turns do) — render-only holds unrotated. Owner feel check pending.
