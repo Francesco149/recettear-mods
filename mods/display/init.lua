@@ -60,11 +60,12 @@ local function res_list()
   return t
 end
 local function res_label(w, h)
-  if w == 0 then
-    local i = info()
-    return ("Native %dx%d"):format(i.out_w, i.out_h)
-  end
+  if w == 0 then return "Native" end
   return ("%dx%d"):format(w, h)
+end
+local function native_help()
+  local m = gfx.monitor()
+  return m.w and ("Native = the monitor, %dx%d"):format(m.w, m.h) or "Native = the monitor"
 end
 
 local function dirty() return staged.display ~= nil or staged.width ~= nil or staged.scale ~= nil end
@@ -113,7 +114,7 @@ local rows = {
       staged.width, staged.height = list[i][1], list[i][2]
     end,
     activate = apply_staged,
-    help = function() return dirty() and APPLY_HELP or "Borderless = the monitor" end },
+    help = function() return dirty() and APPLY_HELP or native_help() end },
   { label = "Render Scale",
     value = function() return ("%dx"):format(cur_scale()) .. staged_mark(staged.scale) end,
     enabled = function() return info().backend == 9 end,
