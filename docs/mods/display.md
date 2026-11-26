@@ -13,6 +13,7 @@ DESIGN.md "Graphics layer"); this mod is the settings + page.
 | Render Scale | 1× · 1.5× · 2× · 3× · 4× | 1× (2× if GPU allows) | on confirm |
 | VSYNC | ON / OFF | ON | live |
 | HD Textures | ON / OFF (greyed when no pack generated) | ON if pack | reload |
+| Backgrounds (widescreen) | Auto (per picture) · Pillarbox · Zoom + Crop · Stretch → `fullbg=auto\|pillar\|cover\|stretch` | Auto | live |
 | HUD Anchor | 0–100 % (0 = HUD in the 4:3 centre, 100 = screen edges) | 100 % | live |
 | Sprite Filter | Point (retail) / Smooth | Point | live |
 

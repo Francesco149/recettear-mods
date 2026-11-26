@@ -1,5 +1,8 @@
 # hd-textures
 
+**Built last** (owner 2026-11-26), together with the AI wide-picture extension; until then the loader's
+`fullbg=cover` (zoom + crop) and procedural frame extension (table action X) stand in.
+
 Higher-resolution textures, made **on the user's machine from their own copy** (invariant 9: the pack is
 never distributed). The loader replaces each texture by path and keeps its logical size, so UVs and layout
 are untouched. Render-only.
