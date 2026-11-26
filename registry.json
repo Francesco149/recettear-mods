@@ -1,0 +1,10 @@
+{
+  "registry_version": 1,
+  "source": {
+    "name": "recettear-mods",
+    "description": "Quality-of-life mods for Recettear on the Recettear Mod Loader.",
+    "homepage": "",
+    "maintainer": "Francesco149"
+  },
+  "mods": []
+}

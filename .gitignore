@@ -1,0 +1,9 @@
+mod_data/
+*.sav*
+save.dat
+_save.dat
+*.bmp
+*.tga
+*.dds
+out/
+__pycache__/
