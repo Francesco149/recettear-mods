@@ -42,7 +42,7 @@ local function tick(active)
   input.consume(PAD_BITS)                             -- Skill buttons are camera keys while Free is on
   local m = input.mouse()
   if bit.band(m.buttons, 2) ~= 0 and m.dx ~= 0 then st.yaw = st.yaw - m.dx * 0.008; busy = true end
-  if m.wheel ~= 0 then zoom = zoom - m.wheel / 120 * 4 end
+  if m.wheel ~= 0 then zoom = zoom - m.wheel * 5 end   -- notches (1.5 units each)
   if turn ~= 0 then st.yaw = st.yaw + turn * TURN; busy = true end
   if zoom ~= 0 then st.dist = clamp((st.dist or last_R) + zoom * ZOOM, DMIN, DMAX); busy = true end
   if lift ~= 0 then st.height = clamp((st.height or last_H) + lift * LIFT, HMIN, HMAX); busy = true end
