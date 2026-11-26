@@ -1,0 +1,51 @@
+[mod]
+id = "display"
+name = "Display Settings"
+version = "0.1.0"
+description = "A Display Settings page in the game's own Options (title and pause): display mode, resolution, aspect / widescreen, backgrounds, HUD anchor, render scale, VSYNC. Applies live through the loader's graphics layer; saved in rml_mods.cfg."
+authors = ["openrecet"]
+target_games = ["recettear_steam_en_1108"]
+render_only = true
+
+[loader]
+api = "1.4"
+
+# "" / 0 / -1 = not set here: rml_loader.cfg decides
+[config.display]
+type = "string"
+default = ""
+label = "Display mode (windowed / borderless / exclusive)"
+
+[config.resolution]
+type = "string"
+default = ""
+label = "Resolution (WxH, or native)"
+
+[config.aspect]
+type = "string"
+default = ""
+label = "Aspect ratio (fill / 4:3 / 16:10 / 16:9 / 21:9)"
+
+[config.fullbg]
+type = "string"
+default = ""
+label = "Widescreen backgrounds (auto / pillar / cover / stretch)"
+
+[config.hud]
+type = "int"
+default = -1
+min = -1
+max = 100
+label = "HUD anchor % (widescreen)"
+
+[config.scale]
+type = "int"
+default = 0
+min = 0
+max = 4
+label = "Render scale"
+
+[config.vsync]
+type = "string"
+default = ""
+label = "VSYNC (on / off)"
