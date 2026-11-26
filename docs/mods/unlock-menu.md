@@ -16,8 +16,18 @@ player can start), but writes nothing retail couldn't.
 - Never set `word 0x56e5788` or stamp banks: the unlock is computed every boot, so removing the mod
   restores the vanilla menu.
 
+## Status (S2, 2026-11-26) — implemented, `mods/unlock-menu`
+- Call-site hook (not a function hook) on the build's one call of the scan (`0x49a46a`); NG+ picker widened
+  on both filter call sites (`0x49b0b1`, `0x49b33c`) when the cursor row is code 4.
+- Decision taken for now: (a) for **NG+ only**. Retail's Survival confirm re-checks GAME_MODE 3 + the clear
+  item on the source bank, so Survival keeps retail's rule (no save edits — invariant 8). (b) is open (owner).
+- Gate results (wine): `@fresh` → 7 rows (5 4 6 7 8 2 3: LOAD hidden with no save, as retail); save 64d43650
+  → 8 rows; NG+ from a Day-1 non-cleared bank → NG+ opening (game mode 1); saved to slot 001 → loads with no
+  mod (game mode 1, Day 2); Survival from the cleared Endless save c062daff → game mode 2; without the mod the
+  title is vanilla again (0 1 7 2 3).
+
 ## Config
-`[config.mode]` = `"all"` (default) | `"vanilla"`; `[config.any_save_ng_plus]` bool (a).
+`[config.mode]` = `"all"` (default) | `"vanilla"`; `[config.any_save_ng_plus]` bool (a), default true.
 
 ## Gate (S2)
 `@fresh` (no save.dat): 8 rows, screenshot. Each new entry starts (NG+ from a day-2 save → day 1 with carried
