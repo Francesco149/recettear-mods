@@ -1,0 +1,21 @@
+[mod]
+id = "unlock-menu"
+name = "Unlock Menu"
+version = "0.1.0"
+description = "The full title menu from the first boot: NEW GAME +, SURVIVAL MODE and SURVIVAL SCORE without a cleared save. Writes nothing to save.dat."
+authors = ["openrecet"]
+target_games = ["recettear_steam_en_1108"]
+render_only = false
+
+[loader]
+api = "1.1"
+
+[config.mode]
+type = "string"
+default = "all"
+label = "Title menu (all = every entry, vanilla = retail's rules)"
+
+[config.any_save_ng_plus]
+type = "bool"
+default = true
+label = "NEW GAME + from any save (not only cleared ones)"
