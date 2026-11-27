@@ -10,7 +10,8 @@ owner ran the same mouse routine in each (144 ≈ stock + 32.4 s, 240 ≈ 144 + 
 Every comparison is a wipe between the SAME movement (owner 2026-11-27): two three-way sections, stock → 144 → 240,
 real time (a fast turn + a strafe) then slow motion (1/3, the strafe).  Each clip plays one stretch of the routine
 from pause to pause (aligned by picture matching); the wipe runs in the pauses with both sides playing (A runs on
-into its pause, B starts on its own), a white divider sweeping across — never mid-movement, never frozen.  No title card; end card.
+into its pause, B starts on its own), a white divider sweeping across — never mid-movement, never frozen.  No title card; the
+owner's own Display Settings visits (Frame Rate stock → Auto; VSYNC off, → 240) at 1/2 speed close it.
 Output OUTDIR/hirefresh_60.mp4 (the real-time parts blend the 3 camera frames behind each video frame = what the eye
 integrates in 1/60 s); --small also writes hirefresh_60_small.mp4 (2-pass, < 20 MB).
 """
@@ -26,10 +27,13 @@ LABEL = {
     "144": "Auto: 144 Hz (vsync)",
     "240": "240 fps, vsync off",
 }
+LABEL.update({"menu1": "Options > Display Settings", "menu2": "Options > Display Settings"})
 SUB = {
     "stock": "the game as shipped",
     "144": "interpolated, one frame per refresh",
     "240": "interpolated; tears on a 144 Hz panel",
+    "menu1": "the display mod’s page",
+    "menu2": "the display mod’s page",
 }
 # pairs: (kind, (mode A, file s), (mode B, file s)) — A and B start on the same moment of the routine
 # sections: (kind, length in file s, ((mode, file s start), …)) — the same stretch of the routine in each recording,
@@ -37,10 +41,13 @@ SUB = {
 SECTIONS = [
     ("rt", 6.25, (("stock", 19.75), ("144", 51.58), ("240", 88.09))),     # a fast turn, then the strafe
     ("slow", 3.75, (("stock", 22.5), ("144", 54.12), ("240", 90.66))),    # the strafe
+    # the owner's own menu visits instead of an end card: Frame Rate 60 (stock) → Auto; VSYNC off, Frame Rate → 240
+    ("menu", None, (("menu1", 39.0, 4.8), ("menu2", 72.0, 5.9))),
 ]
+MENU_SPEED = 1.5                               # file seconds per on-screen second: 1/2 real speed, readable
 # on-screen seconds of each wipe: both sides keep playing — the outgoing clip runs on into its pause, the incoming one
 # starts on its own pause; short enough that the run-on stays before the routine's next turn
-WIPE = {"rt": 0.3, "slow": 0.75}
+WIPE = {"rt": 0.3, "slow": 0.75, "menu": 0.5}
 SMALL_MB = 19.0
 
 
@@ -60,6 +67,8 @@ def timing(kind, fps):
             return f"setpts=PTS-STARTPTS,tmix=frames=3,framestep=3,setpts=N/({FILE_FPS})/TB"
         return f"setpts=N/({CAM_FPS})/TB"
     out = FILE_FPS if fps == 60 else CAM_FPS
+    if kind == "menu":
+        return f"setpts=(PTS-STARTPTS)/{MENU_SPEED},fps={out}"
     return f"setpts=PTS-STARTPTS,fps={out}"
 
 
@@ -85,17 +94,17 @@ WIPE_EXPR = "if(lt(abs(X-W*P),4),255,if(lt(X,W*P),A,B))"    # B in from the righ
 
 
 def section(kind, length, clips, fps):
-    scale = 3 if kind == "rt" else 1          # file seconds per on-screen second
-    on = length / scale
+    scale = {"rt": 3, "slow": 1, "menu": MENU_SPEED}[kind]     # file seconds per on-screen second
     n = len(clips)
     w = WIPE[kind]
-    g = ";".join(pane(k, m, s, length + (w * scale if k < n - 1 else 0), kind, fps) for k, (m, s) in enumerate(clips))
-    cur, t = "p0", on
+    lens = [c[2] if len(c) > 2 else length for c in clips]   # file seconds per clip
+    g = ";".join(pane(k, c[0], c[1], lens[k] + (w * scale if k < n - 1 else 0), kind, fps) for k, c in enumerate(clips))
+    cur, t = "p0", lens[0] / scale
     for k in range(1, n):
         out = f"x{k}"
         g += f";[{cur}][p{k}]xfade=transition=custom:duration={w}:offset={t}:expr='{WIPE_EXPR}'[{out}]"
-        cur, t = out, t + on
-    g += f";[{cur}]format=yuv420p,{banner(kind, fps)}[v]"
+        cur, t = out, t + lens[k] / scale
+    g += f";[{cur}]format=yuv420p" + (f",{banner(kind, fps)}" if kind != "menu" else "") + "[v]"
     return g
 
 
@@ -123,10 +132,8 @@ def render(src, outdir, fps, preview):
     rate = FILE_FPS if fps == 60 else CAM_FPS
     enc = ["-c:v", "libx264", "-preset", "veryfast" if preview else "slow", "-crf", "24" if preview else "15",
            "-pix_fmt", "yuv420p", "-r", rate, "-an"]
-    end = card([("Display Settings  >  Frame Rate: Auto", 52, FONT_B),
-                ("follows the monitor; the game logic stays at 60", 34, FONT_M)], 3.0, fps)
     jobs = [(f"{i:02d}_{k}", src, section(k, length, clips, fps)) for i, (k, length, clips) in enumerate(SECTIONS)]
-    jobs.append(("09_end", None, end))
+
     names = []
     for name, inp, graph in jobs:
         out = os.path.join(parts, name + ".mp4")
