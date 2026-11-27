@@ -8,8 +8,8 @@ CLIPS_DIR = the fetched out/ of a video/ run (title, wide, display, free, fp, wp
 (the overlay stretch of a plan_overlay --grab run: real time, so its fps line is the display's);
 HIREFRESH.MOV = the camera recording hirefresh.py cuts (its slow-motion section is reused here); MUSIC.wav = the
 user's own bgm/open.wav (looped as the game loops it).  Nothing derived from the game goes into the repo.
-Output: OUTDIR/showcase_1080p60.mp4 (YouTube: x264 crf 15, AAC 320k) and OUTDIR/showcase_readme.mp4 (720p60, 2-pass,
-under SMALL_MB for a GitHub README upload).
+Output: OUTDIR/showcase_1080p60.mp4 (YouTube: x264 crf 15, AAC 320k), showcase_discord.mp4 (720p60, 2-pass, under
+20 MB) and showcase_readme.mp4 (720p30, 2-pass, under 10 MB: GitHub's README upload limit).
 
 Each segment is rendered on its own (clip + captions drawn with Pillow, animated by ffmpeg), then the segments are
 cross-faded into one timeline.  Captions sit where the picture is idle (the void beside the shop, the blurred pause
@@ -25,7 +25,7 @@ W, H, FPS = 1920, 1080, 60
 FONT = "/usr/share/fonts/TTF/Roboto-%s.ttf"
 AMBER, INK, CREAM, WHITE = (255, 184, 28), (22, 17, 12), (238, 226, 205), (255, 255, 255)
 XF = 0.4                 # cross-fade between segments (s)
-SMALL_MB = 19.0
+DISCORD_MB, README_MB = 19.0, 9.5
 REPO = "github.com/Francesco149/recettear-mod-loader"
 
 
@@ -289,12 +289,11 @@ def assemble(parts, durs, music, out, preview):
     return t
 
 
-def small(final, out, dur):
-    """720p60 2-pass under SMALL_MB"""
-    akb = 128
-    kbps = int(SMALL_MB * 8192 / dur * 0.97) - akb
+def small(final, out, dur, mb, height=720, fps=60, akb=128):
+    """a 2-pass copy under `mb` MB"""
+    kbps = int(mb * 8192 / dur * 0.97) - akb
     log = out + ".2pass"
-    base = ["ffmpeg", "-v", "error", "-y", "-i", final, "-vf", "scale=1280:720:flags=lanczos", "-c:v", "libx264",
+    base = ["ffmpeg", "-v", "error", "-y", "-i", final, "-vf", f"fps={fps},scale=-2:{height}:flags=lanczos", "-c:v", "libx264",
             "-preset", "slower", "-b:v", f"{kbps}k", "-pix_fmt", "yuv420p", "-colorspace", "bt709", "-color_primaries",
             "bt709", "-color_trc", "bt709", "-passlogfile", log]
     for extra in (["-pass", "1", "-an", "-f", "mp4", os.devnull],
@@ -305,7 +304,13 @@ def small(final, out, dur):
     for f in os.listdir(os.path.dirname(out)):
         if f.startswith(os.path.basename(log)):
             os.remove(os.path.join(os.path.dirname(out), f))
-    print(out, f"{os.path.getsize(out) / 1048576:.1f} MB at {kbps} kb/s video")
+    print(out, f"{os.path.getsize(out) / 1048576:.1f} MB at {kbps} kb/s video, {height}p{fps}")
+
+
+def copies(final, outdir, dur):
+    """the two small copies: Discord (under 20 MB) and the GitHub README (its upload limit is 10 MB)"""
+    small(final, os.path.join(outdir, "showcase_discord.mp4"), dur, DISCORD_MB)
+    small(final, os.path.join(outdir, "showcase_readme.mp4"), dur, README_MB, fps=30, akb=96)
 
 
 def main():
@@ -314,12 +319,18 @@ def main():
     ap.add_argument("-o", "--outdir", default=os.path.expanduser("~/Videos/showcase"))
     ap.add_argument("--preview", action="store_true", help="fast encodes")
     ap.add_argument("--only", help="render one segment (name prefix) and stop")
+    ap.add_argument("--copies", action="store_true", help="only re-encode the small copies from the existing master")
     # cut points that depend on the capture (seconds into the clip)
     ap.add_argument("--display-start", type=float, default=0.5); ap.add_argument("--display-len", type=float, default=6.9)
     ap.add_argument("--fp-len", type=float, default=7.6)
     ap.add_argument("--wpage-start", type=float, default=0.7); ap.add_argument("--wpage-len", type=float, default=4.6)
     ap.add_argument("--recette", type=int, nargs=2, default=(1015, 935), help="Recette's feet-ish centre in the wardrobe clip")
     a = ap.parse_args()
+    if a.copies:
+        final = os.path.join(a.outdir, "showcase_1080p60.mp4")
+        dur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", final],
+                                   capture_output=True, text=True).stdout)
+        return copies(final, a.outdir, dur)
     tmp = os.path.join(a.outdir, "parts_showcase" + ("_preview" if a.preview else ""))
     os.makedirs(tmp, exist_ok=True)
     parts, durs = [], []
@@ -339,7 +350,7 @@ def main():
     dur = assemble(parts, durs, a.music, final, a.preview)
     print(final, f"{dur:.1f} s  {os.path.getsize(final) / 1048576:.1f} MB")
     if not a.preview:
-        small(final, os.path.join(a.outdir, "showcase_readme.mp4"), dur)
+        copies(final, a.outdir, dur)
 
 
 if __name__ == "__main__":
