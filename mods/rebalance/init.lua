@@ -53,7 +53,7 @@ end
 ledger_sync()
 
 -- ── 1.6 Buying or selling, while the price dial is up ──
--- Every customer machine shows the dial in state 6.  Kind 0 = the customer sells to you (you pay); 1 = a request
+-- Every customer machine shows the dial in state 6 and its confirmation (Okay! / Start Again) in 15.  Kind 0 = the customer sells to you (you pay); 1 = a request
 -- ("something to …"), 2 = an item off your shelves, 4 / 5 = an order picked up: you sell.  3 (placing an order) has
 -- no price.
 local BANNER = {
@@ -64,7 +64,7 @@ BANNER[1], BANNER[2], BANNER[4], BANNER[5] = BANNER.sell, BANNER.sell, BANNER.se
 function R.banner()
   if not cfg.get("deal_banner") then return nil end
   local c = game.customers.active() and game.customers.current()
-  if not c or c.state ~= 6 then return nil end
+  if not c or (c.state ~= 6 and c.state ~= 15) then return nil end   -- 6 the dial, 15 its Okay! / Start Again box
   return BANNER[c.kind]
 end
 -- between the item's "Base Price" plate (ends y 196) and the dial's bubble (text from y 250), on the plate's centre
