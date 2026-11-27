@@ -9,8 +9,8 @@ owner ran the same mouse routine in each (144 ≈ stock + 32.4 s, 240 ≈ 144 + 
 
 Every comparison is a wipe between the SAME movement (owner 2026-11-27): two three-way sections, stock → 144 → 240,
 real time (a fast turn + a strafe) then slow motion (1/3, the strafe).  Each clip plays one stretch of the routine
-from pause to pause (aligned by picture matching); the wipe runs while both sides are frozen on those pauses (A's
-last frame, B's first), a white divider sweeping across — never mid-movement.  No title card; end card.
+from pause to pause (aligned by picture matching); the wipe runs in the pauses with both sides playing (A runs on
+into its pause, B starts on its own), a white divider sweeping across — never mid-movement, never frozen.  No title card; end card.
 Output OUTDIR/hirefresh_60.mp4 (the real-time parts blend the 3 camera frames behind each video frame = what the eye
 integrates in 1/60 s); --small also writes hirefresh_60_small.mp4 (2-pass, < 20 MB).
 """
@@ -35,10 +35,12 @@ SUB = {
 # sections: (kind, length in file s, ((mode, file s start), …)) — the same stretch of the routine in each recording,
 # pause to pause, aligned by picture matching (64×48 normalised thumbnails of the 4:3 middle, help box + HUD masked)
 SECTIONS = [
-    ("rt", 6.75, (("stock", 19.75), ("144", 51.58), ("240", 88.09))),     # a fast turn, then the strafe
-    ("slow", 4.25, (("stock", 22.5), ("144", 54.12), ("240", 90.66))),    # the strafe
+    ("rt", 6.25, (("stock", 19.75), ("144", 51.58), ("240", 88.09))),     # a fast turn, then the strafe
+    ("slow", 3.75, (("stock", 22.5), ("144", 54.12), ("240", 90.66))),    # the strafe
 ]
-WIPE = 1.0                                     # on-screen seconds of each wipe (both sides frozen)
+# on-screen seconds of each wipe: both sides keep playing — the outgoing clip runs on into its pause, the incoming one
+# starts on its own pause; short enough that the run-on stays before the routine's next turn
+WIPE = {"rt": 0.3, "slow": 0.75}
 SMALL_MB = 19.0
 
 
@@ -61,15 +63,12 @@ def timing(kind, fps):
     return f"setpts=PTS-STARTPTS,fps={out}"
 
 
-def pane(i, mode, start, length, kind, fps, head, tail):
-    """a clip with its label top-right (a wipe from the right shows the incoming label first), frozen `head` / `tail`
-    on-screen seconds on its first / last frame"""
+def pane(i, mode, start, length, kind, fps):
+    """a clip with its label top-right (a wipe from the right shows the incoming label first)"""
     f = f"[0:v]trim=start={start}:duration={length},{timing(kind, fps)}"
     x = "w-text_w-28"
     f += "," + text(LABEL[mode], x, 28, 44)
     f += "," + text(SUB[mode], x, 98, 28, FONT_M)
-    if head or tail:
-        f += f",tpad=start_mode=clone:start_duration={head}:stop_mode=clone:stop_duration={tail}"
     return f + f",format=gbrp[p{i}]"
 
 
@@ -89,13 +88,13 @@ def section(kind, length, clips, fps):
     scale = 3 if kind == "rt" else 1          # file seconds per on-screen second
     on = length / scale
     n = len(clips)
-    g = ";".join(pane(k, m, s, length, kind, fps, WIPE if k else 0, WIPE if k < n - 1 else 0)
-                 for k, (m, s) in enumerate(clips))
+    w = WIPE[kind]
+    g = ";".join(pane(k, m, s, length + (w * scale if k < n - 1 else 0), kind, fps) for k, (m, s) in enumerate(clips))
     cur, t = "p0", on
     for k in range(1, n):
         out = f"x{k}"
-        g += f";[{cur}][p{k}]xfade=transition=custom:duration={WIPE}:offset={t}:expr='{WIPE_EXPR}'[{out}]"
-        cur, t = out, t + WIPE + on
+        g += f";[{cur}][p{k}]xfade=transition=custom:duration={w}:offset={t}:expr='{WIPE_EXPR}'[{out}]"
+        cur, t = out, t + on
     g += f";[{cur}]format=yuv420p,{banner(kind, fps)}[v]"
     return g
 
