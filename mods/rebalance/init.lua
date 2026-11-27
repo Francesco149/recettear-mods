@@ -52,20 +52,27 @@ local function ledger_sync()          -- the page exists only while the row is o
 end
 ledger_sync()
 
--- ── 1.6 Buying or selling, in large, while the price dial is up ──
--- kind 0 = the customer sells to you (you pay), 1 / 3.. = requests and orders, 2 = they buy from your shelves.
-local BANNER = { [0] = { "YOU ARE BUYING", 0xff7f5020 }, [2] = { "YOU ARE SELLING", 0xff307f30 } }
+-- ── 1.6 Buying or selling, while the price dial is up ──
+-- Every customer machine shows the dial in state 6.  Kind 0 = the customer sells to you (you pay); 1 = a request
+-- ("something to …"), 2 = an item off your shelves, 4 / 5 = an order picked up: you sell.  3 (placing an order) has
+-- no price.
+local BANNER = {
+  [0] = { "You are buying",  { face = "Comic Sans MS", px = 22, weight = 900, top = 0xffe9a0, bottom = 0xff8c1a, edge_rgb = 0x4a1c06, edge = 1, shadow = 2, fat = 2 } },
+  sell  = { "You are selling", { face = "Comic Sans MS", px = 22, weight = 900, top = 0xe6ffd0, bottom = 0x4fc23a, edge_rgb = 0x123a10, edge = 1, shadow = 2, fat = 2 } },
+}
+BANNER[1], BANNER[2], BANNER[4], BANNER[5] = BANNER.sell, BANNER.sell, BANNER.sell, BANNER.sell
 function R.banner()
   if not cfg.get("deal_banner") then return nil end
   local c = game.customers.active() and game.customers.current()
-  if not c or c.state_name ~= "price" then return nil end
+  if not c or c.state ~= 6 then return nil end
   return BANNER[c.kind]
 end
+-- between the item's "Base Price" plate (ends y 196) and the dial's bubble (text from y 250), on the plate's centre
 ui.on_draw(function()
   local b = R.banner()
   if not b then return end
-  for _, o in ipairs({ { -2, 0 }, { 2, 0 }, { 0, -2 }, { 0, 2 } }) do ui.text(320 + o[1], 28 + o[2], b[1], 0xff101010, 1.4, "c", "x1") end
-  ui.text(320, 28, b[1], b[2], 1.4, "c")
+  local l = ui.label(b[1], b[2])
+  if l then ui.draw_label(l, 304, 216) else ui.text(304, 206, b[1], 0xff7f7f7f, 1, "c") end
 end)
 
 cfg.on_change(function(key) if key == "ledger" then ledger_sync() end end)

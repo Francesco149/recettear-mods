@@ -72,6 +72,7 @@ Each step is published here as it lands, with the rows it adds.
   reputation level 0–10 and the points toward the next level (a deal gives +5, +2 or +1 by how close your price was to
   what they had in mind; a refusal or a third haggle round costs 1). Set the row to "Rep. + Budget" to also see what
   each customer can pay now and at level 10.
-- **Buy / Sell Banner**: "YOU ARE BUYING" or "YOU ARE SELLING" over the price dial.
+- **Buy / Sell Banner**: "You are buying" or "You are selling" above the price dial, for shelf sales, requests,
+  order pickups and customers selling to you.
 
 Nothing in 0.1.0 changes the simulation.
