@@ -1,8 +1,8 @@
 [mod]
 id = "display"
 name = "Display Settings"
-version = "0.1.0"
-description = "A Display Settings page in the game's own Options (title and pause): display mode, resolution, aspect / widescreen, backgrounds, HUD anchor, render scale, VSYNC. Applies live through the loader's graphics layer; saved in rml_mods.cfg."
+version = "0.2.0"
+description = "A Display Settings page in the game's own Options (title and pause): display mode, resolution, aspect / widescreen, backgrounds, HUD anchor, render scale, VSYNC, frame rate (interpolated above 60). Applies live through the loader's graphics layer; saved in rml_mods.cfg."
 authors = ["openrecet"]
 target_games = ["recettear_steam_en_1108"]
 render_only = true
@@ -49,3 +49,8 @@ label = "Render scale"
 type = "string"
 default = ""
 label = "VSYNC (on / off)"
+
+[config.fps]
+type = "string"
+default = "auto"
+label = "Frame rate (60 / auto / 120 / 144 / 165 / 240)"

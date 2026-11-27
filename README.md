@@ -13,7 +13,7 @@ Specs only; implementation follows the loader's session plan (`../recettear-mod-
 | mod | what | spec | session |
 |---|---|---|---|
 | `unlock-menu` | every title-menu entry (NG+, Survival, Survival Score) regardless of progress | [spec](docs/mods/unlock-menu.md) | S2 |
-| `display` | Display Settings page in the game's Options: resolution, display mode, frame rate, aspect, render scale, VSYNC, HD textures, HUD anchor | [spec](docs/mods/display.md) | S3–S5 |
+| `display` | Display Settings page in the game's Options: resolution, display mode, frame rate, aspect, render scale, VSYNC, HD textures, HUD anchor | [spec](docs/mods/display.md) | S3–S5, S10 |
 | `free-camera` | an extra camera mode in the shop's Button-4 cycle: orbit, zoom, height | [spec](docs/mods/free-camera.md) | S6 |
 | `first-person` | another extra mode: first person with a wide FOV, mouse look, WASD | [spec](docs/mods/first-person.md) | S7 |
 | `wardrobe` | recolour Recette by region (hair, eyes, skin, shirt, top, tie, apron, skirt, bobbles, boots & belt) everywhere she appears | [spec](docs/mods/wardrobe.md) | S8 |

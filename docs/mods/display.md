@@ -8,7 +8,7 @@ DESIGN.md "Graphics layer"); this mod is the settings + page.
 |---|---|---|---|
 | Resolution | desktop modes + window sizes; `Native` = monitor | monitor | on confirm (device reset) |
 | Display Mode | Windowed / Borderless / Fullscreen | Borderless | on confirm |
-| Frame Rate | 60 · Auto (refresh, e.g. 165) | 60 → Auto after S10 | live |
+| Frame Rate | 60 · Auto (the monitor's refresh) · 120 · 144 · 165 · 240 — above 60 = interpolated (loader S10) | Auto | live |
 | Aspect Ratio | 4:3 (pillarbox) · 16:9 · 16:10 · 21:9 · Auto | Auto | live |
 | Render Scale | 1× · 1.5× · 2× · 3× · 4× | 1× (2× if GPU allows) | on confirm |
 | VSYNC | ON / OFF | ON | live |
@@ -27,3 +27,9 @@ Built: `mods/display` on `mod.ui.native` + `mod.gfx.apply`. Display Mode / Resol
 as you step them; every change is saved under `display.*` in `rml_mods.cfg` and applied at start (one Reset right
 after boot). Not yet: Frame Rate (S10), HD Textures (S9), Sprite Filter — shown greyed; 1.5× render scale; a
 "keep these settings?" revert timer. Open it: Options → Up (header) → Right.
+
+## Status (0.2, S10 — 2026-11-27)
+
+Frame Rate is live (`mod.gfx.interp_set`, no Reset), saved as `display.fps`, default **Auto** = the monitor's refresh
+(retail's 60 on a 60 Hz display). Above 60 the loader presents interpolated replays of each game frame: the picture
+runs one tick (16.7 ms) behind the sim — 60 is the lowest-latency choice.

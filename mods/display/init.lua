@@ -19,6 +19,10 @@ if cfg.get("fullbg") ~= "" then boot.fullbg = cfg.get("fullbg") end
 if cfg.get("hud") >= 0 then boot.hud = cfg.get("hud") end
 if cfg.get("scale") > 0 then boot.scale = cfg.get("scale") end
 if cfg.get("vsync") ~= "" then boot.vsync = cfg.get("vsync") end
+if gfx.interp_set and cfg.get("fps") ~= "" then   -- frame rate: interpolation, no Reset needed
+  local v = cfg.get("fps")
+  gfx.interp_set{ fps = v == "auto" and "auto" or (tonumber(v) or 60) > 60 and tonumber(v) or 0 }
+end
 if next(boot) then
   local ok, how = gfx.apply(boot)
   mod.log(("saved settings applied at start: %s"):format(ok and how or tostring(how)))
@@ -155,8 +159,22 @@ local rows = {
   ui.choice{ label = "VSYNC", values = { 1, 0 }, labels = { "ON", "OFF" }, wrap = true,
     get = function() return info().vsync end,
     set = function(v) local ok = gfx.apply{ vsync = v == 1 }; if ok then cfg.set("vsync", v == 1 and "on" or "off") end end },
-  { label = "Frame Rate", value = function() return "60" end, enabled = function() return false end,
-    help = "Higher rates come with interpolation" },
+  ui.choice{ label = "Frame Rate",
+    values = { "60", "auto", "120", "144", "165", "240" }, labels = { "60", "Auto", "120", "144", "165", "240" },
+    get = function()
+      local f = gfx.interp and gfx.interp().fps or 0
+      return f == 0 and "60" or f < 0 and "auto" or tostring(f)
+    end,
+    set = function(v)
+      if not gfx.interp_set then return end
+      gfx.interp_set{ fps = v == "auto" and "auto" or v == "60" and 0 or tonumber(v) }
+      cfg.set("fps", v)
+    end,
+    enabled = function() return info().backend == 9 and gfx.interp_set ~= nil end,
+    help = function()
+      local hz = gfx.monitor().hz
+      return "Auto = the monitor" .. ((hz or 0) > 1 and (" (" .. hz .. " Hz)") or "") .. "; above 60 = interpolated"
+    end },
   { label = "HD Textures", value = function() return "n/a" end, enabled = function() return false end,
     help = "No HD pack generated" },
   { label = "Sprite Filter", value = function() return "Point" end, enabled = function() return false end,
