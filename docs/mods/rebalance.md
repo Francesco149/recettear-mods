@@ -54,7 +54,7 @@ customers by then)?
 |---|---|---|---|
 | 2.1 | **Saying no keeps your combo.** Turning down an order you can't fill, or a customer's offer to sell you something, no longer resets the Just Combo. Haggling badly still does. (This also covers Euria: you can refuse her without losing the chain.) | ● | 2 |
 | 2.2 | **Orders are not silently lost.** Today an order disappears the moment you open the shop on its due day, served or not, and vanishes if you don't open. The game contains a "late pickup" visit that this makes unreachable. With this on: the customer comes at your next opening, late, with the game's own late line and no reputation gain. | ● | 2 |
-| 2.3 | **Adventurers don't buy downgrades.** They stop picking up gear that is worse than what they wear in the stat their class uses, and stop equipping it. No more pricing a Worn Sword at 500 % to protect your swordsman. | ● | 3 |
+| 2.3 | **Adventurers don't buy downgrades.** They stop picking up gear that is worse than what they wear in the stat their class uses, and stop equipping it. No more pricing a Worn Sword at 500 % to protect your swordsman. Players disagree on how the game decides today (any better stat? defence only? boots that are never worn, a second hat in a free slot), so the first step is to read the real rule out of the game and publish it here. | ● | 3 |
 | 2.4 | **Hand gear to an adventurer** at the Adventurers' Guild at the price they would pay in the shop, limited by their budget. Keeps "equip them by selling to them", removes the wait for them to walk in and want that item. | ○ | 3 |
 | 2.5 | **Late arrivals catch up.** A customer you unlock mid-game starts at half the average reputation of the ones you already have, instead of zero and a wallet that can't afford anything you stock. | ○ | 2 |
 | 2.6 | **Choose what fusion consumes**: the confirm box shows which copy will be used (the game takes the highest +N first) and lets you change it. Items on shelves stay protected, as now. | ● | 3 |
@@ -92,12 +92,16 @@ first-class choice at New Game.
 | 4.4 | **Boss retry.** Lose on a boss floor: retry from the start of that floor with the bag as it was, or leave under the normal defeat rule (HD Edition). | ○ | 3 |
 | 4.5 | **Dungeon insurance** at the Adventurers' Guild. The HD Edition has only teased the name, so this is our version: pay a fee before leaving (scaled by dungeon depth); if the run ends in defeat you keep 3 more items than your merchant level allows (the game gives 1, then 2 at level 16, 3 at level 50). | ○ | 3 |
 | 4.6 | **Bosses drop more**: a second chest on boss floors (HD Edition says "many items", no numbers). | ○ | 3 |
-| 4.7 | **Adventurer tuning**: Caillou can move while charging and walks faster; small fixes for Tielle at close range and for Nagi. Exact numbers once measured, published here before they ship. | ○ | 3 |
+| 4.7 | **Adventurer tuning.** Opinion is split, so nothing is decided: Caillou is "very hard to use" on the wiki and slow to level for English players, and one of the most recommended on 5ch; Nagi was weakened by an official update and people ask for 8-direction attacks; Tielle is helpless up close. We will measure first and publish numbers here before anything ships. | ○ | 3 |
 | 4.8 | **Autosave**: a rolling save in its own slot each morning and on reaching the town map; per dungeon floor if the game can resume there (HD Edition; resuming inside a dungeon is not something the original does, so that half may not be possible). | ● morning / town | 2, dungeon 3 |
 | 4.9 | **Use a healing item at once** from the bag, without the menu (HD Edition). | ○ | 3 |
+| 4.10 | **Kinder completion.** The most repeated complaint in the Japanese thread: the item book from 95 % on is pure luck. Drop and chest odds ×1 / ×2 / ×3 for items you have never found; nothing changes for items you already have, so it is no money engine. | ○ ×1 | 3 |
+| 4.11 | **Shorter expeditions**: a dungeon trip costs 1 period instead of 2. For players who say the dungeon is a trap while in debt because two periods of selling earn far more. Disputed: others like that it is a real choice. | ○ | 2 |
+| 4.12 | **Save protection**: New Game, New Game + and Survival ask before writing over a slot that holds another run, and never pick an occupied slot by themselves. Lost main saves come up again and again. | C | 2 |
 
-Not planned: more enemy types, new dungeons, hitbox changes. Feedback on falling-rock traps and on leaving
-only every 5 floors is noted; say if these matter to you.
+Not planned: more enemy types, new dungeons, hitbox changes, an auto-sell clerk. Feedback on falling-rock
+traps, on leaving only every 5 floors and on fusion recipes that need three of a rare item is noted; say
+if these matter to you.
 
 ## 5. What this mod will not touch
 
@@ -117,8 +121,11 @@ Controls, key config, mouse, resolution and frame rate are the `display` mod's j
 - **Player feedback, English**: r/Recettear threads, Steam reviews and discussions, GOG forum, TV Tropes
   (its "Scrappy Mechanic" is adventurer gear, 2.3 / 2.4), the Recettear wiki.
 - **Player feedback, Japanese**: Steam reviews in Japanese, the atwiki (whose FAQ collects the 2ch threads'
-  questions: time slots, wallets, lost orders, the window shelf), blog reviews, 4Gamer. Not read yet: the
-  5ch thread itself and ニコニコ大百科 (both refused our reader).
+  questions: time slots, wallets, lost orders, the window shelf), blog reviews, 4Gamer, the ニコニコ大百科 article, and the whole 5ch thread "EasyGameStation総合スレ Part15"
+  (1000 posts, 2012–2021). That thread's top topics: item-book drop rates (4.10), adventurer gear
+  (2.3, 2.4), the dungeon not paying off during the debt (4.11), the loops needed for all cards (3.4).
+  It also defends the first-loop debt curve as the best thing in the game, which is why section 3 is off
+  by default.
 - **HD Edition** (EasyGameStation, announced 2024-12-30, no date as of 2026-11-27): the official account's
   posts. It has shown widescreen, shop layout tools and decorations, shrinking the shop, a guild
   receptionist, a merchant bag, drop labels, instant healing items, an automatic suspend save (resume at
@@ -140,7 +147,9 @@ generated, and exactly when Euria appears.
    customer but does not reset it.
 3. Debt: is 75 % the right "Relaxed"? Would you use Steep?
 4. Tear's extension: once per loop, or once per game?
-5. What did we miss?
+5. Vending machines on a checkered floor make money meaningless late on. Leave it, or offer a toggle?
+6. Adventurer tuning (4.7): who actually needs help?
+7. What did we miss?
 
 ---
 
