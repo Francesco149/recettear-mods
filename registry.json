@@ -2,9 +2,194 @@
   "registry_version": 1,
   "source": {
     "name": "recettear-mods",
-    "description": "Quality-of-life mods for Recettear on the Recettear Mod Loader.",
-    "homepage": "",
+    "description": "Mods for Recettear on the Recettear Mod Loader.",
+    "homepage": "https://github.com/Francesco149/recettear-mods",
     "maintainer": "Francesco149"
   },
-  "mods": []
+  "mods": [
+    {
+      "id": "display",
+      "name": "Display Settings",
+      "description": "A Display Settings page in the game's own Options (title and pause): display mode, resolution, aspect / widescreen, backgrounds, HUD anchor, render scale, VSYNC, frame rate (interpolated above 60). Applies live through the loader's graphics layer; saved in rml_mods.cfg.",
+      "keywords": [],
+      "target_games": [
+        "recettear_steam_en_1108"
+      ],
+      "versions": [
+        {
+          "version": "0.3.0",
+          "released": "2026-11-27",
+          "notes": "Display Settings page in the game's Options (title and pause): display mode, resolution, aspect / widescreen, backgrounds, HUD anchor, render scale, VSYNC, frame rate (60 stock, or interpolated up to the display's refresh rate). Applies live.",
+          "min_loader": "0.1.0",
+          "requires": {},
+          "files": [
+            {
+              "kind": "download",
+              "dest": "mods/display/init.lua",
+              "url": "https://raw.githubusercontent.com/Francesco149/recettear-mods/display-0.3.0/mods/display/init.lua",
+              "sha256": "74305669f1e87dd5d1301c2dcabd7b98e2a2fb1b3bbbb5760d2e839deb4733fe",
+              "size": 10163
+            },
+            {
+              "kind": "download",
+              "dest": "mods/display/mod.toml",
+              "url": "https://raw.githubusercontent.com/Francesco149/recettear-mods/display-0.3.0/mods/display/mod.toml",
+              "sha256": "b1041d184ed681d2a5f3d5d34fe78fb18dd0ea741f32b31f3409311900e99809",
+              "size": 1275
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "first-person",
+      "name": "First Person",
+      "description": "A first-person camera in the shop's own Button-4 cycle (retail → retail low → [Free] → First Person → retail): eyes at Recette's head, mouse look, WASD walking relative to the view, left click = confirm, right click / Tab = menu. Recette's own sprite and shadow are hidden. Hands back to the game camera in cinematics (counter, decorating, day end).",
+      "keywords": [],
+      "target_games": [
+        "recettear_steam_en_1108"
+      ],
+      "versions": [
+        {
+          "version": "0.2.0",
+          "released": "2026-11-27",
+          "notes": "First-person view in the shop (Button 4 cycles to it): eyes at Recette's head, mouse look at the display's refresh rate, WASD, left click = confirm, right click / Tab = menu. Settings: field of view, sensitivity, invert Y.",
+          "min_loader": "0.1.0",
+          "requires": {},
+          "files": [
+            {
+              "kind": "download",
+              "dest": "mods/first-person/init.lua",
+              "url": "https://raw.githubusercontent.com/Francesco149/recettear-mods/first-person-0.2.0/mods/first-person/init.lua",
+              "sha256": "5de3059462c528f363600d286ce049e6ae96ec262065a465e07d344b92622948",
+              "size": 9143
+            },
+            {
+              "kind": "download",
+              "dest": "mods/first-person/mod.toml",
+              "url": "https://raw.githubusercontent.com/Francesco149/recettear-mods/first-person-0.2.0/mods/first-person/mod.toml",
+              "sha256": "b7adde9e335ce86f602498909a1f080bc19e08e3bb6b8596605bcc97a8df4c98",
+              "size": 1201
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "free-camera",
+      "name": "Free Camera",
+      "description": "An extra camera in the shop's own Button-4 cycle (retail → retail low → Free → retail): turn, zoom and raise the view; walking stays camera-relative like retail's own camera. Hands back to the game camera in cinematics (counter, decorating, day end).",
+      "keywords": [],
+      "target_games": [
+        "recettear_steam_en_1108"
+      ],
+      "versions": [
+        {
+          "version": "0.1.0",
+          "released": "2026-11-27",
+          "notes": "A free orbit camera as an extra entry in the shop's Button-4 camera cycle: rotate, zoom, height (keys, right-drag, pad). Cutscenes hand back to the game's camera.",
+          "min_loader": "0.1.0",
+          "requires": {},
+          "files": [
+            {
+              "kind": "download",
+              "dest": "mods/free-camera/init.lua",
+              "url": "https://raw.githubusercontent.com/Francesco149/recettear-mods/free-camera-0.1.0/mods/free-camera/init.lua",
+              "sha256": "1acb05391f392b944f886ec8712fca5965ddf19c1c2f2e430657c5af94036560",
+              "size": 4751
+            },
+            {
+              "kind": "download",
+              "dest": "mods/free-camera/mod.toml",
+              "url": "https://raw.githubusercontent.com/Francesco149/recettear-mods/free-camera-0.1.0/mods/free-camera/mod.toml",
+              "sha256": "70801255e10190e028f23dbfbff81f311f1a56a5731936ae6fc6548ea8f51532",
+              "size": 931
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unlock-menu",
+      "name": "Unlock Menu",
+      "description": "The full title menu whatever the saves hold: all 8 entries; NEW GAME + and SURVIVAL MODE from any slot (an empty slot = a fresh start). Writes nothing to save.dat.",
+      "keywords": [],
+      "target_games": [
+        "recettear_steam_en_1108"
+      ],
+      "versions": [
+        {
+          "version": "0.2.0",
+          "released": "2026-11-27",
+          "notes": "The full title menu whatever the saves hold: all 8 entries; New Game+ and Survival from any slot (an empty slot = a fresh start). Writes nothing to save.dat.",
+          "min_loader": "0.1.0",
+          "requires": {},
+          "files": [
+            {
+              "kind": "download",
+              "dest": "mods/unlock-menu/init.lua",
+              "url": "https://raw.githubusercontent.com/Francesco149/recettear-mods/unlock-menu-0.2.0/mods/unlock-menu/init.lua",
+              "sha256": "4471c9ef846164dcfa72932a77b4778d92b3b7dda581127dd8c6748a0b43c898",
+              "size": 5076
+            },
+            {
+              "kind": "download",
+              "dest": "mods/unlock-menu/mod.toml",
+              "url": "https://raw.githubusercontent.com/Francesco149/recettear-mods/unlock-menu-0.2.0/mods/unlock-menu/mod.toml",
+              "sha256": "66c9172cf655f545257bfb03fa7c129355e55b7bcf4769d077a42c130286292c",
+              "size": 468
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wardrobe",
+      "name": "Wardrobe",
+      "description": "Recolour Recette by region — hair, eyes, skin, shirt, top, tie, apron, skirt, hair bobbles, boots & belt — everywhere she appears (field sprite, portraits, the kneeling chibi, the pause art). Presets or your own #RRGGBB per region, live from a Wardrobe page in the pause / title Options. Masks are built on your PC from your own game files at load, from shipped colour rules: no pixels shipped.",
+      "keywords": [],
+      "target_games": [
+        "recettear_steam_en_1108"
+      ],
+      "versions": [
+        {
+          "version": "0.1.1",
+          "released": "2026-11-27",
+          "notes": "Recolour Recette (hair, eyes, clothes: 10 regions) from an Options page: presets or per-region colours, live preview. Works on your own game files at load time; nothing is written to the game folder.",
+          "min_loader": "0.1.0",
+          "requires": {},
+          "files": [
+            {
+              "kind": "download",
+              "dest": "mods/wardrobe/init.lua",
+              "url": "https://raw.githubusercontent.com/Francesco149/recettear-mods/wardrobe-0.1.1/mods/wardrobe/init.lua",
+              "sha256": "1a9eb7a7637d7930af4ad045d2c40a8295f625e68a5970fb40e414b007fb6424",
+              "size": 7692
+            },
+            {
+              "kind": "download",
+              "dest": "mods/wardrobe/mod.toml",
+              "url": "https://raw.githubusercontent.com/Francesco149/recettear-mods/wardrobe-0.1.1/mods/wardrobe/mod.toml",
+              "sha256": "b4e3fe5fd78abf2ccd9ec0d9cae9f8498a602f67ca54d810a9e128e5833f41e3",
+              "size": 1998
+            },
+            {
+              "kind": "download",
+              "dest": "mods/wardrobe/palettes.txt",
+              "url": "https://raw.githubusercontent.com/Francesco149/recettear-mods/wardrobe-0.1.1/mods/wardrobe/palettes.txt",
+              "sha256": "88a0a5b3d83dd8d37cf7f4287e1914abbe30e804216e8f5f0dc61858716f0b93",
+              "size": 560
+            },
+            {
+              "kind": "download",
+              "dest": "mods/wardrobe/regions.txt",
+              "url": "https://raw.githubusercontent.com/Francesco149/recettear-mods/wardrobe-0.1.1/mods/wardrobe/regions.txt",
+              "sha256": "b8969d3932ebcc2bd4fc8d0e132ee738b88237f29bfa34e6758c7cf9f0a993c6",
+              "size": 7706
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

@@ -1,0 +1,37 @@
+{
+  "display": {
+    "0.3.0": {
+      "released": "2026-11-27",
+      "min_loader": "0.1.0",
+      "notes": "Display Settings page in the game's Options (title and pause): display mode, resolution, aspect / widescreen, backgrounds, HUD anchor, render scale, VSYNC, frame rate (60 stock, or interpolated up to the display's refresh rate). Applies live."
+    }
+  },
+  "first-person": {
+    "0.2.0": {
+      "released": "2026-11-27",
+      "min_loader": "0.1.0",
+      "notes": "First-person view in the shop (Button 4 cycles to it): eyes at Recette's head, mouse look at the display's refresh rate, WASD, left click = confirm, right click / Tab = menu. Settings: field of view, sensitivity, invert Y."
+    }
+  },
+  "free-camera": {
+    "0.1.0": {
+      "released": "2026-11-27",
+      "min_loader": "0.1.0",
+      "notes": "A free orbit camera as an extra entry in the shop's Button-4 camera cycle: rotate, zoom, height (keys, right-drag, pad). Cutscenes hand back to the game's camera."
+    }
+  },
+  "unlock-menu": {
+    "0.2.0": {
+      "released": "2026-11-27",
+      "min_loader": "0.1.0",
+      "notes": "The full title menu whatever the saves hold: all 8 entries; New Game+ and Survival from any slot (an empty slot = a fresh start). Writes nothing to save.dat."
+    }
+  },
+  "wardrobe": {
+    "0.1.1": {
+      "released": "2026-11-27",
+      "min_loader": "0.1.0",
+      "notes": "Recolour Recette (hair, eyes, clothes: 10 regions) from an Options page: presets or per-region colours, live preview. Works on your own game files at load time; nothing is written to the game folder."
+    }
+  }
+}
