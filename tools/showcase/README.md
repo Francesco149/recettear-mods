@@ -5,3 +5,4 @@ outside the repo (`~/Videos/`); outputs go to `~/Videos/showcase/` until the sho
 
 
 - `hirefresh.py SRC.MOV [--small]` — the high-refresh video from a 180 fps camera recording of a 144 Hz monitor (stock 60 → Auto 144 → 240 vsync off; the same mouse routine in each). Two three-way wipe sections, real time then slow motion: each clip plays the same stretch of the routine pause to pause (aligned by picture matching), wipes run in the pauses with both sides playing, behind a white divider. It closes on the owner’s own Display Settings visits (Frame Rate stock → Auto; VSYNC off, → 240) at 1/2 speed instead of an end card. `--small` = a 2-pass copy under 19 MB (`hirefresh_60_small.mp4`).
+- `hirefresh.py SRC.MOV --cut long [--small]` — the uncut recording in real time (menus included, the mode labelled while the game is on screen), then the slow-motion three-way wipe → `hirefresh_long_60.mp4`. Both cuts carry the colour grade (`GRADE`: the phone footage is underexposed).

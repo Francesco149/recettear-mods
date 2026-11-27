@@ -44,6 +44,11 @@ SECTIONS = [
     # the owner's own menu visits instead of an end card: Frame Rate 60 (stock) → Auto; VSYNC off, Frame Rate → 240
     ("menu", None, (("menu1", 39.0, 4.8), ("menu2", 72.0, 5.9))),
 ]
+# colour grade (the phone exposed for the monitor: luma highs ~183 of 235, mean 87): white at 0.80, a touch of gamma +
+# saturation → mean ~112, highs ~230 without clipping the cream walls
+GRADE = "colorlevels=rimax=0.80:gimax=0.80:bimax=0.80,eq=gamma=1.10:saturation=1.06"
+# --cut long: the uncut recording in real time (menus included), then the slow-motion wipe — mode labels by file time
+FULL_LABELS = (("stock", 0.0, 30.5), ("144", 44.4, 61.8), ("240", 78.4, 999))
 MENU_SPEED = 1.5                               # file seconds per on-screen second: 1/2 real speed, readable
 # on-screen seconds of each wipe: both sides keep playing — the outgoing clip runs on into its pause, the incoming one
 # starts on its own pause; short enough that the run-on stays before the routine's next turn
@@ -74,7 +79,7 @@ def timing(kind, fps):
 
 def pane(i, mode, start, length, kind, fps):
     """a clip with its label top-right (a wipe from the right shows the incoming label first)"""
-    f = f"[0:v]trim=start={start}:duration={length},{timing(kind, fps)}"
+    f = f"[0:v]trim=start={start}:duration={length},{timing(kind, fps)},{GRADE}"
     x = "w-text_w-28"
     f += "," + text(LABEL[mode], x, 28, 44)
     f += "," + text(SUB[mode], x, 98, 28, FONT_M)
@@ -108,6 +113,16 @@ def section(kind, length, clips, fps):
     return g
 
 
+def full(fps):
+    """the whole recording in real time, the current mode labelled top-right while the game is on screen"""
+    g = f"[0:v]{timing('rt', fps)},{GRADE}"
+    for m, a, b in FULL_LABELS:
+        en = f":enable='between(t,{a / 3:.3f},{b / 3:.3f})'"
+        g += "," + text(LABEL[m], "w-text_w-28", 28, 44, extra=en)
+        g += "," + text(SUB[m], "w-text_w-28", 98, 28, FONT_M, extra=en)
+    return g + ",format=yuv420p[v]"
+
+
 def card(lines, secs, fps):
     out = FILE_FPS if fps == 60 else CAM_FPS
     g = f"color=c=0x101014:s=1920x1080:r={out}:d={secs}"
@@ -126,13 +141,17 @@ def run(cmd):
         sys.exit(r.stderr[-3000:])
 
 
-def render(src, outdir, fps, preview):
-    parts = os.path.join(outdir, f"parts_{fps}")
+def render(src, outdir, fps, preview, cut="short"):
+    parts = os.path.join(outdir, f"parts_{cut}_{fps}")
     os.makedirs(parts, exist_ok=True)
     rate = FILE_FPS if fps == 60 else CAM_FPS
     enc = ["-c:v", "libx264", "-preset", "veryfast" if preview else "slow", "-crf", "24" if preview else "15",
            "-pix_fmt", "yuv420p", "-r", rate, "-an"]
-    jobs = [(f"{i:02d}_{k}", src, section(k, length, clips, fps)) for i, (k, length, clips) in enumerate(SECTIONS)]
+    if cut == "long":
+        k, length, clips = SECTIONS[1]
+        jobs = [("00_full", src, full(fps)), ("01_slow", src, section(k, length, clips, fps))]
+    else:
+        jobs = [(f"{i:02d}_{k}", src, section(k, length, clips, fps)) for i, (k, length, clips) in enumerate(SECTIONS)]
 
     names = []
     for name, inp, graph in jobs:
@@ -147,7 +166,7 @@ def render(src, outdir, fps, preview):
         names.append(out)
     lst = os.path.join(parts, "list.txt")
     open(lst, "w").write("".join(f"file '{n}'\n" for n in names))
-    final = os.path.join(outdir, f"hirefresh_{fps}{'_preview' if preview else ''}.mp4")
+    final = os.path.join(outdir, f"hirefresh{'_long' if cut == 'long' else ''}_{fps}{'_preview' if preview else ''}.mp4")
     run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", lst, "-c", "copy", "-movflags", "+faststart", final])
     print(final)
     return final
@@ -175,11 +194,13 @@ def main():
     ap.add_argument("src")
     ap.add_argument("-o", "--outdir", default=os.path.expanduser("~/Videos/showcase"))
     ap.add_argument("--fps", default="60", choices=["60", "180"])
+    ap.add_argument("--cut", default="short", choices=["short", "long"],
+                    help="short: wipes + menus; long: the uncut recording, then the slow-motion wipe")
     ap.add_argument("--small", action="store_true", help=f"also a 2-pass copy under {SMALL_MB} MB")
     ap.add_argument("--preview", action="store_true", help="fast encode")
     a = ap.parse_args()
     os.makedirs(a.outdir, exist_ok=True)
-    final = render(a.src, a.outdir, int(a.fps), a.preview)
+    final = render(a.src, a.outdir, int(a.fps), a.preview, a.cut)
     if a.small:
         small(final)
 
