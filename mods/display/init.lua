@@ -19,6 +19,19 @@ if cfg.get("fullbg") ~= "" then boot.fullbg = cfg.get("fullbg") end
 if cfg.get("hud") >= 0 then boot.hud = cfg.get("hud") end
 if cfg.get("scale") > 0 then boot.scale = cfg.get("scale") end
 if cfg.get("vsync") ~= "" then boot.vsync = cfg.get("vsync") end
+-- Fullscreen (exclusive) refresh follows the frame rate: "60" = stock = the display at 60 Hz (retail's own even pacing),
+-- anything else = the highest refresh the resolution has (D3D's default in exclusive is usually 60)
+local function max_hz(w, h)
+  if (w or 0) == 0 then local m = gfx.monitor(); w, h = m.w, m.h end
+  local best = 0
+  for _, m in ipairs(gfx.modes()) do if m.w == w and m.h == h and m.hz > best then best = m.hz end end
+  return best > 0 and best or nil
+end
+local function excl_refresh(fps, w, h) if fps == "60" then return 60 end return max_hz(w, h) end
+if cfg.get("display") == "exclusive" and gfx.interp_set then
+  local w, h = res_of(cfg.get("resolution"))
+  boot.refresh = excl_refresh(cfg.get("fps"), w, h)
+end
 if gfx.interp_set and cfg.get("fps") ~= "" then   -- frame rate: interpolation, no Reset needed
   local v = cfg.get("fps")
   gfx.interp_set{ fps = v == "auto" and "auto" or (tonumber(v) or 60) > 60 and tonumber(v) or 0 }
@@ -76,6 +89,10 @@ local function dirty() return staged.display ~= nil or staged.width ~= nil or st
 local function apply_staged()
   if not dirty() then return end
   local t = { display = staged.display, width = staged.width, height = staged.height, scale = staged.scale }
+  if cur_display() == "exclusive" and gfx.interp_set then
+    local w, h = cur_res()
+    t.refresh = excl_refresh(cfg.get("fps"), w, h)
+  end
   local ok, how = gfx.apply(t)
   mod.log(("apply %s %s %s: %s"):format(tostring(t.display), tostring(t.width and (t.width .. "x" .. t.height)),
           tostring(t.scale), ok and how or tostring(how)))
@@ -160,7 +177,7 @@ local rows = {
     get = function() return info().vsync end,
     set = function(v) local ok = gfx.apply{ vsync = v == 1 }; if ok then cfg.set("vsync", v == 1 and "on" or "off") end end },
   ui.choice{ label = "Frame Rate",
-    values = { "60", "auto", "120", "144", "165", "240" }, labels = { "60", "Auto", "120", "144", "165", "240" },
+    values = { "60", "auto", "120", "144", "165", "240" }, labels = { "60 (stock)", "Auto", "120", "144", "165", "240" },
     get = function()
       local f = gfx.interp and gfx.interp().fps or 0
       return f == 0 and "60" or f < 0 and "auto" or tostring(f)
@@ -169,11 +186,19 @@ local rows = {
       if not gfx.interp_set then return end
       gfx.interp_set{ fps = v == "auto" and "auto" or v == "60" and 0 or tonumber(v) }
       cfg.set("fps", v)
+      local i = info()
+      if i.display == "exclusive" then
+        local want = excl_refresh(v, i.out_w, i.out_h)
+        if want and want ~= i.refresh then gfx.apply{ refresh = want } end
+      end
     end,
     enabled = function() return info().backend == 9 and gfx.interp_set ~= nil end,
     help = function()
       local hz = gfx.monitor().hz
-      return "Auto = the monitor" .. ((hz or 0) > 1 and (" (" .. hz .. " Hz)") or "") .. "; above 60 = interpolated"
+      if gfx.interp and gfx.interp().fps == 0 then
+        return "Stock: retail's frames, no interpolation" .. (info().display == "exclusive" and " (display at 60 Hz)" or "")
+      end
+      return "Auto = the monitor" .. ((hz or 0) > 1 and (" (" .. hz .. " Hz)") or "") .. "; above 60 = smoothed"
     end },
   { label = "HD Textures", value = function() return "n/a" end, enabled = function() return false end,
     help = "No HD pack generated" },

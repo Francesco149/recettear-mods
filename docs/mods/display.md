@@ -8,7 +8,7 @@ DESIGN.md "Graphics layer"); this mod is the settings + page.
 |---|---|---|---|
 | Resolution | desktop modes + window sizes; `Native` = monitor | monitor | on confirm (device reset) |
 | Display Mode | Windowed / Borderless / Fullscreen | Borderless | on confirm |
-| Frame Rate | 60 · Auto (the monitor's refresh) · 120 · 144 · 165 · 240 — above 60 = interpolated (loader S10) | Auto | live |
+| Frame Rate | 60 (stock) · Auto (the monitor's refresh) · 120 · 144 · 165 · 240 — above 60 = interpolated (loader S10); in Fullscreen, 60 (stock) also sets the display to 60 Hz and the others to the resolution's highest refresh | Auto | live (Fullscreen: + device reset) |
 | Aspect Ratio | 4:3 (pillarbox) · 16:9 · 16:10 · 21:9 · Auto | Auto | live |
 | Render Scale | 1× · 1.5× · 2× · 3× · 4× | 1× (2× if GPU allows) | on confirm |
 | VSYNC | ON / OFF | ON | live |
@@ -33,3 +33,9 @@ after boot). Not yet: Frame Rate (S10), HD Textures (S9), Sprite Filter — show
 Frame Rate is live (`mod.gfx.interp_set`, no Reset), saved as `display.fps`, default **Auto** = the monitor's refresh
 (retail's 60 on a 60 Hz display). Above 60 the loader presents interpolated replays of each game frame: the picture
 runs one tick (16.7 ms) behind the sim — 60 is the lowest-latency choice.
+
+## 0.3 (S10.2 — 2026-11-27)
+
+"60 (stock)" = retail's own frames and pacing (no interpolation). On a high-refresh desktop (windowed / borderless) 60
+frames can't land evenly on 144 refreshes — pick Fullscreen for retail's exact 60 Hz pacing (the row switches the
+display to 60 Hz there, and back to the highest refresh for the other rates).

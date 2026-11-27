@@ -1,7 +1,7 @@
 [mod]
 id = "display"
 name = "Display Settings"
-version = "0.2.0"
+version = "0.3.0"
 description = "A Display Settings page in the game's own Options (title and pause): display mode, resolution, aspect / widescreen, backgrounds, HUD anchor, render scale, VSYNC, frame rate (interpolated above 60). Applies live through the loader's graphics layer; saved in rml_mods.cfg."
 authors = ["openrecet"]
 target_games = ["recettear_steam_en_1108"]
