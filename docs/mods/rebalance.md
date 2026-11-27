@@ -1,6 +1,6 @@
 # Rebalance + QoL (working title) — design draft for feedback
 
-**Status: draft, nothing is built yet.** This is a proposal for a mod for the original PC Recettear (Steam
+**Status: draft; 1.1 and 1.6 are built (mod 0.1.0), the rest is not.** This is a proposal for a mod for the original PC Recettear (Steam
 EN 1.108) running on [recettear-mod-loader](https://github.com/Francesco149/recettear-mod-loader). Tell us
 what you would turn on, what you would never touch, and what is missing: open an issue on this repo.
 Short version and progress: [mods/rebalance](../../mods/rebalance/README.md).
@@ -162,11 +162,11 @@ are in openrecet `docs/findings/`, new facts get recorded there):
 
 | API | What it gives | Used by |
 |---|---|---|
-| `mod.config` | Declarative settings (type, default, presets, help) → Options page, load / save, per-save overrides | every row |
-| `mod.store` | Per-save side data keyed to the save slot, following save / load / copy / delete; the save file itself stays vanilla | 1.2, 3.1, 3.2, 4.5 |
-| `mod.ui.native` additions | Pause-menu pages (still unbuilt), toast / result line, confirm box, world-space labels, HUD bars | 1.1–1.10, 4.2, 4.3 |
+| `mod.config` ✅ | Declarative settings (type, default, presets, help) → Options page, load / save, per-save overrides | every row |
+| `mod.store` ✅ | Per-save side data keyed to the save slot, following retail's save / load / bank backups / Clear Save Data; the save file itself stays vanilla | 1.2, 3.1, 3.2, 4.5 |
+| `mod.ui.native` additions | Pause-menu pages ✅, HUD drawing in the shop ✅ (`on_draw`); toast / result line, confirm box, world-space labels, HUD bars | 1.1–1.10, 4.2, 4.3 |
 | `mod.text` | Replace or add dialogue lines and item descriptions by script id; first-time tips | 1.4, 1.10 |
-| `mod.game.customers` | `budget(id)` (retail's `0x45ecc0`), `on_deal{grade, rep, xp, combo}`, `on_combo_break{reason}` (cancellable), `set_closeness`, pick filter `on_pick{item}` | 1.1–1.5, 2.1, 2.3, 2.5 |
+| `mod.game.customers` | `budget(id)` (retail's `0x45ecc0`) ✅, `reputation(id)` / `roster()` ✅, `on_deal{grade, rep, xp, combo}`, `on_combo_break{reason}` (cancellable), `set_closeness`, pick filter `on_pick{item}` | 1.1–1.5, 2.1, 2.3, 2.5 |
 | `mod.game.orders` | Slots (10 × 20 bytes at bank + 173560), `on_due`, `on_clear` (cancellable → late pickup) | 1.8, 2.2 |
 | `mod.game.time` | `on_advance{site, cost}` over the three sites (shop sale, town return, dungeon exit), `cost(dest)` preview | 1.7 |
 | `mod.game.debt` | Schedule override (`0x48d997`), `on_payment{due, gold}` (editable), `on_gameover`, loop count | 3.1, 3.2 |

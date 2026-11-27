@@ -1,0 +1,35 @@
+[mod]
+id = "rebalance"
+name = "Rebalance + QoL"
+version = "0.1.0"
+description = "Explains the rules the game hides and removes friction that isn't a decision; balance options are off unless you pick them. In development: this version has the customer ledger (pause menu) and the buying / selling banner. Every change is a row on its own Options page. Saves stay vanilla."
+authors = ["openrecet"]
+target_games = ["recettear_steam_en_1108"]
+
+[loader]
+api = "1.12"
+
+# Presets (docs/mods/rebalance.md): Classic+ = information and fixes only, no simulation number changes;
+# Rebalanced = Classic+ and the friction fixes.  The rows built so far are information only, so the two agree.
+[presets]
+rebalanced = "Rebalanced"
+classic = "Classic+"
+vanilla = "Off"
+
+# 1.1 Customer ledger
+[config.ledger]
+type = "string"
+values = ["off", "hearts", "full"]
+labels = ["Off", "Reputation", "Rep. + Budget"]
+default = "hearts"
+label = "Customer Ledger"
+description = "A pause-menu page: what each customer thinks of you"
+preset_vanilla = "off"
+
+# 1.6 Buying or selling shown in large on the haggle screen
+[config.deal_banner]
+type = "bool"
+default = true
+label = "Buy / Sell Banner"
+description = "Says who is paying while you set a price"
+preset_vanilla = false

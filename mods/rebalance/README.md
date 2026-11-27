@@ -4,7 +4,8 @@ A mod for the original PC *Recettear* that explains the rules the game hides, re
 real decision, and offers balance options that are off unless you pick them. Every change is its own
 switch on an in-game Options page. Saves stay loadable by the unmodded game.
 
-**Nothing is playable yet.** This page tracks what is being built and why. The full design, with every
+**The first rows are in** (version 0.1.0, in this repository; it needs the next mod loader release): the settings
+page with presets, the customer ledger and the buying / selling banner. This page tracks what is being built and why. The full design, with every
 row and its default, is in [the design draft](../../docs/mods/rebalance.md).
 
 ## Tell us what you think
@@ -54,10 +55,23 @@ voices. Nothing in the mod shows you the accepted price before you make an offer
 | Step | State |
 |---|---|
 | Design draft and feedback round | open |
-| Settings page with presets, per-save mod data, pause-menu pages (loader) | next |
-| Classic+ : ledger, deal result line, time-cost preview, reminders, save protection | not started |
+| Settings page with presets, per-save mod data, pause-menu pages (loader) | done |
+| Classic+ : customer ledger (pause menu → Customers), buying / selling banner | done (0.1.0) |
+| Classic+ : deal result line, deal history, time-cost preview, reminders, save protection | next |
 | Rebalanced: combo, late orders, gear, scene skipping, companions | not started |
 | Options: debt, extension, completion odds, expeditions | not started |
 | Dungeon features from the HD Edition | not started |
 
 Each step is published here as it lands, with the rows it adds.
+
+## What 0.1.0 does
+
+- **Options → Rebalance + QoL** (title and pause; Up from the top row, then Right): a Preset row (Rebalanced /
+  Classic+ / Off) and one row per change.
+- **Customer Ledger**: a new "Customers" entry in the pause menu. One row per customer you have dealt with:
+  reputation level 0–10 and the points toward the next level (a deal gives +5, +2 or +1 by how close your price was to
+  what they had in mind; a refusal or a third haggle round costs 1). Set the row to "Rep. + Budget" to also see what
+  each customer can pay now and at level 10.
+- **Buy / Sell Banner**: "YOU ARE BUYING" or "YOU ARE SELLING" over the price dial.
+
+Nothing in 0.1.0 changes the simulation.
