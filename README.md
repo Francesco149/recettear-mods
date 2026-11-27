@@ -5,7 +5,11 @@ Mods for *Recettear: An Item Shop's Tale* (Steam, English 1.108), built on the
 `registry.json` lists the mods for the loader's launcher, which downloads them (every file sha256-pinned) into your
 game folder. You need your own copy of the game; the game exe and your saves are never modified.
 
-**Install:** get the loader's release, run `recettear-launcher.exe`, install mods from *Browse*, press *Launch game*.
+**Install:** [step by step in the loader's README](https://github.com/Francesco149/recettear-mod-loader#get-it-running-steam-install-2-minutes)
+— get the loader's release, run `recettear-launcher.exe`, install mods from *Browse*, press *Launch game*.
+
+**Showcase video:** [watch](https://github.com/Francesco149/recettear-mod-loader/releases/download/v0.1.0/showcase_readme.mp4)
+(1 minute, every mod in the real game).
 
 | mod | what |
 |---|---|
@@ -15,7 +19,8 @@ game folder. You need your own copy of the game; the game exe and your saves are
 | [`wardrobe`](#wardrobe) | recolour Recette by region (hair, eyes, clothes), everywhere she appears |
 | [`unlock-menu`](#unlock-menu) | the full title menu whatever your saves hold |
 
-All screenshots below are the real game at 1920×1080, taken by `tools/showcase/shots/`.
+All screenshots below are the real game at 1920×1080, taken by `tools/showcase/shots/` (the preset strip: frames of
+the showcase video's capture, `tools/showcase/video/`).
 
 ## Display Settings
 
@@ -63,9 +68,9 @@ they load — nothing is written to the game folder, and no game art is in this 
 
 ![Wardrobe page](docs/img/page_wardrobe.jpg)
 
-Original and the *Midnight* preset in the shop:
+Original and the *Midnight*, *Sakura* and *Forest* presets in the shop:
 
-![Original and Midnight](docs/img/wardrobe_before_after.jpg)
+![Original, Midnight, Sakura, Forest](docs/img/wardrobe_presets.jpg)
 ![The shop with Midnight](docs/img/camera_low_midnight.jpg)
 
 ## Unlock Menu

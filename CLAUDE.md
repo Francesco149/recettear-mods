@@ -11,3 +11,4 @@ session plan covers both repos). Specs: `docs/mods/*.md`.
   + the tag `<id>-<version>` pushed (the registry's URLs point at it).
 - README pictures: `tools/showcase/shots/` (plan.lua → the loader's `tools/win_steam.py … --mods …,shots` →
   `shots.py OUT_DIR` → `docs/img/`).
+- Showcase video: `tools/showcase/README.md` (`video/` plan → clips, `showcase.py` → the two renders in `~/Videos/showcase/`).

@@ -1,0 +1,19 @@
+[mod]
+id = "showcase_video"
+name = "Showcase video (tool)"
+version = "0.1.0"
+description = "Scripted gameplay clips for the showcase video (tools/showcase/video/plan.lua). Not an installable mod."
+render_only = false
+
+[loader]
+api = "1.11"
+
+[config.step]
+type = "int"
+default = 1
+description = "record every Nth tick (preview runs)"
+
+[config.plan]
+type = "string"
+default = "plan"
+description = "plan file (without .lua)"
