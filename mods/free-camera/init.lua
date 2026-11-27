@@ -77,7 +77,7 @@ local function draw()
 end
 
 cam.add_mode{
-  name = "free",
+  name = "free", order = 10,
   on_enter = function() st.help = cfg.get("help") == "off" and 0 or 300; st.shown_d, st.shown_h = nil, nil
                         mod.log("free camera on") end,
   on_leave = function() if st.dirty then save() end; mod.log("free camera off") end,

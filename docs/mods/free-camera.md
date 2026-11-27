@@ -35,3 +35,5 @@ angle); pad Skill 1/2 turn, 3/4 zoom, 5 reset; `[config]` distance / height / ya
 `rml det` market-buy-display + day2-shop IDENTICAL with Free active and unrotated (counter cinematic hands back and
 returns); `tests/lua/camera.lua` 16/16. Turning moves retail's yaw target, so a turned Free changes where Recette walks
 (as retail's own camera turns do) — render-only holds unrotated. Owner feel check pending.
+0.1 + S7: registers with `order = 10` (first-person uses 20), so the cycle is 0 → 2 → Free → First Person → 0
+whichever folder loads first.

@@ -1,0 +1,44 @@
+[mod]
+id = "first-person"
+name = "First Person"
+version = "0.1.0"
+description = "A first-person camera in the shop's own Button-4 cycle (retail → retail low → [Free] → First Person → retail): eyes at Recette's head, mouse look, WASD walking relative to the view, left click = confirm, right click / Tab = menu. Recette's own sprite and shadow are hidden. Hands back to the game camera in cinematics (counter, decorating, day end)."
+authors = ["openrecet"]
+target_games = ["recettear_steam_en_1108"]
+# turning steers retail's yaw (walking follows the view) and standing still faces the view: a different walk, like
+# the free camera's turns — not render-only
+render_only = false
+
+[loader]
+api = "1.6"
+
+[config.fov]
+type = "float"
+default = 100.0
+min = 70.0
+max = 130.0
+label = "Field of view (horizontal degrees)"
+
+[config.sensitivity]
+type = "float"
+default = 1.0
+min = 0.2
+max = 4.0
+label = "Mouse sensitivity"
+
+[config.invert_y]
+type = "bool"
+default = false
+label = "Invert mouse Y"
+
+[config.eye_height]
+type = "float"
+default = 2.6
+min = 1.0
+max = 4.0
+label = "Eye height (Recette's sprite top = 3.4)"
+
+[config.help]
+type = "string"
+default = "on"
+label = "Help box on entry (on / off)"
