@@ -1,7 +1,7 @@
 [mod]
 id = "first-person"
 name = "First Person"
-version = "0.1.0"
+version = "0.1.1"
 description = "A first-person camera in the shop's own Button-4 cycle (retail → retail low → [Free] → First Person → retail): eyes at Recette's head, mouse look, WASD walking relative to the view, left click = confirm, right click / Tab = menu. Recette's own sprite and shadow are hidden. Hands back to the game camera in cinematics (counter, decorating, day end)."
 authors = ["openrecet"]
 target_games = ["recettear_steam_en_1108"]
@@ -10,7 +10,7 @@ target_games = ["recettear_steam_en_1108"]
 render_only = false
 
 [loader]
-api = "1.6"
+api = "1.7"
 
 [config.fov]
 type = "float"

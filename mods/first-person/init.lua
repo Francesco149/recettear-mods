@@ -4,13 +4,10 @@
 -- Up / Left / Down / Right; standing still, Recette faces where you look (her octant follows), so Z / left click
 -- talks to what is in front.  Her billboard + shadow are hidden (render only); projection: horizontal FOV + near 0.1.
 local cam, party, input, ui, cfg = mod.game.camera, mod.game.party, mod.input, mod.ui.native, mod.config
-if not (cam and cam.set_projection and party) then mod.log("needs loader API 1.6 (camera.set_projection, mod.game.party)") return end
+if not (cam and cam.set_projection and party and mod.input.block) then mod.log("needs loader API 1.7 (camera.set_projection, mod.game.party, input.block)") return end
 local P = input.PAD
 local VK = { W = 0x57, A = 0x41, S = 0x53, D = 0x44, TAB = 0x09, LBUTTON = 0x01, RBUTTON = 0x02, BACK = 0x08 }
 local DIRS = { { VK.W, P.U }, { VK.A, P.L }, { VK.S, P.D }, { VK.D, P.R } }
--- retail's keyboard binding index (recet.ini padNM, 1-based into the DIK table 0x5cbc2f) of each key: A..Z = 14..39
-local KEYIDX = { [VK.W] = 36, [VK.A] = 14, [VK.S] = 32, [VK.D] = 17 }
-local SLOTBIT = { 0x4, 0x1, 0x8, 0x2, 0x10, 0x20, 0x40, 0x80, 0x100 }   -- binding slot 0..8 → pad bit
 local PITCH_MAX = 1.25
 local TAU = 2 * math.pi
 local function wrap(a) return a - TAU * math.floor((a + math.pi) / TAU) end
@@ -18,11 +15,13 @@ local function clamp(v, a, b) if v < a then return a elseif v > b then return b 
 
 local st = { yaw = 0, pitch = -0.12, help = 0, blend = 1, captured = false, last_active = false }
 
--- which pad bits retail's own bindings give W/A/S/D (default: W = button E = the pause menu): swallowed while held
-local function bound_bits(vk)
-  local want, bits = KEYIDX[vk], 0
-  for k = 0, 8 do if mod.mem.read_i16(0x438cce8 + 2 * k) == want then bits = bit.bor(bits, SLOTBIT[k + 1]) end end
-  return bits
+-- W A S D never reach retail's own bindings while first person is on (default: W = button E = the pause menu): the
+-- loader cuts them at the poll DirectInput reads (mod.input.block, API 1.7)
+local blocking = false
+local function block(on)
+  if on == blocking then return end
+  blocking = on
+  for _, d in ipairs(DIRS) do input.block(d[1], on) end
 end
 
 local function capture(on)
@@ -42,16 +41,15 @@ local function tick(active)
   st.free = free
   -- WASD drive the pad everywhere in the house (free roam, dialogs, menus, pause); retail's own W binding is swallowed
   if cam.house() or scene == 9 then
-    local inj, eat = 0, 0
-    for _, d in ipairs(DIRS) do
-      if input.key(d[1]) then inj = bit.bor(inj, d[2]); eat = bit.bor(eat, bound_bits(d[1])) end
-    end
-    eat = bit.band(eat, bit.bnot(inj))
-    if eat ~= 0 then input.consume(eat) end
+    block(true)
+    local inj = 0
+    for _, d in ipairs(DIRS) do if input.key(d[1]) then inj = bit.bor(inj, d[2]) end end
     if inj ~= 0 then input.inject(inj) end
     if input.pressed(VK.TAB) then input.inject(P.Y) end                     -- menu (retail's button E)
     if input.pressed(VK.LBUTTON) then input.inject(P.A) end                 -- confirm / talk / pick up
     if input.pressed(VK.RBUTTON) then input.inject(free and P.Y or P.B) end     -- menu in free roam, back in menus
+  else
+    block(false)
   end
   if not active then
     capture(false); party.hide_self(false); st.last_active = false
@@ -123,7 +121,7 @@ cam.add_mode{
     mod.log("first person on")
   end,
   on_leave = function()
-    capture(false); party.hide_self(false); cam.set_projection(nil)
+    capture(false); block(false); party.hide_self(false); cam.set_projection(nil)
     mod.log("first person off")
   end,
   on_tick = tick, pose = pose, draw = draw }
