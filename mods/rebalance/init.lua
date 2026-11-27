@@ -57,8 +57,8 @@ ledger_sync()
 -- ("something to …"), 2 = an item off your shelves, 4 / 5 = an order picked up: you sell.  3 (placing an order) has
 -- no price.
 local BANNER = {
-  [0] = { "You are buying",  { face = "Comic Sans MS", px = 22, weight = 900, top = 0xffe9a0, bottom = 0xff8c1a, edge_rgb = 0x4a1c06, edge = 1, shadow = 2, fat = 2 } },
-  sell  = { "You are selling", { face = "Comic Sans MS", px = 22, weight = 900, top = 0xe6ffd0, bottom = 0x4fc23a, edge_rgb = 0x123a10, edge = 1, shadow = 2, fat = 2 } },
+  [0] = { "You are buying",  { face = "Comic Sans MS", px = 22, weight = 900, top = 0xffe9a0, bottom = 0xff8c1a, edge_rgb = 0x2a0c00, edge = 2, shadow = 2, fat = 2 } },
+  sell  = { "You are selling", { face = "Comic Sans MS", px = 22, weight = 900, top = 0xe6ffd0, bottom = 0x4fc23a, edge_rgb = 0x061c06, edge = 2, shadow = 2, fat = 2 } },
 }
 BANNER[1], BANNER[2], BANNER[4], BANNER[5] = BANNER.sell, BANNER.sell, BANNER.sell, BANNER.sell
 function R.banner()
