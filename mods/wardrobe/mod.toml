@@ -1,7 +1,7 @@
 [mod]
 id = "wardrobe"
 name = "Wardrobe"
-version = "0.1.0"
+version = "0.1.1"
 description = "Recolour Recette by region — hair, eyes, skin, shirt, top, tie, apron, skirt, hair bobbles, boots & belt — everywhere she appears (field sprite, portraits, the kneeling chibi, the pause art). Presets or your own #RRGGBB per region, live from a Wardrobe page in the pause / title Options. Masks are built on your PC from your own game files at load, from shipped colour rules: no pixels shipped."
 authors = ["openrecet"]
 target_games = ["recettear_steam_en_1108"]

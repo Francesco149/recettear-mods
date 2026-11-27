@@ -63,8 +63,10 @@ none          0 84 66 128
 none          66 100 90 128
 
 image bmp/pause_bg_rete.tga
-# the pause background's art (1024x512): Tear on the left
-none          0 0 305 512
+# the pause background's art (1024x512): Tear on the left (Recette's pocket reaches x 280 below y 300)
+none          0 0 305 300
+none          0 300 280 512
+none          280 440 300 512
 none          305 140 335 205
 only hair     320 20 530 205
 only bobbles  470 80 525 125
@@ -72,6 +74,13 @@ only eyes     355 115 470 175
 seed apron    46 48 29 12
 seed apron    66 33 34 9
 seed shirt    88 -1 33 9
+seed shirt    82 -2 40 12
+seed shirt    88 1 52 9
+seed shirt    97 -1 21 8
+seed eyes     57 10 14 9
+seed hair     30 10 18 9
+seed hair     24 8 13 7
+seed hair     42 12 24 9
 
 image bmp/chr/chr00.bmp
 # the field sheet: palette pixel art (~90 colours) — each colour of the palette named, tight tolerances
@@ -96,7 +105,7 @@ seed hair       64.5   6.9  19.5 1.5   # 181 151 122
 seed hair       38.4   9.4  22.7 1.5   # 116 84 54
 seed hair       32.0   9.4  21.9 1.5   # 99 69 41
 seed hair       58.2   7.8  21.3 1.5   # 166 134 103
-seed hair       47.1  12.5  26.9 1.5   # 145 103 67
+seed shirt      47.1  12.5  26.9 1.5   # 145 103 67  (mostly sleeve shading in the running frames)
 seed hair       45.0  20.9  28.4 1.5   # 151 92 60
 seed hair       32.1   9.9  21.5 1.5   # 100 69 42
 seed hair       49.6   8.1  20.8 1.5   # 143 112 83
@@ -166,3 +175,20 @@ seed keep_line  48.3  -5.2 -10.5 1.5   # 94 118 132
 seed keep_line  64.7  -2.2 -10.2 1.5   # 143 159 175
 seed keep_line  70.5  25.7  75.4 1.5   # 243 152 0
 seed keep_line  66.9  43.4  72.8 1.5   # 255 127 8
+# the running frames (sheet rows y >= 512) shade and outline her hair with colours the standing frames use for the
+# skirt (83 58 51) and the eye rims (94 66 49): hair takes them there (seeds a hair's breadth off, so where skirt / eyes
+# are allowed their exact seeds still win)
+seed hair      27.4   9.8   8.6 1.5   # 83 58 51
+seed hair      31.4  10.2  15.0 1.5   # 94 66 49
+seed hair      24.0  10.0  15.0 1.5   # 77 50 34
+not skirt     0 512 512 640
+not eyes      0 512 512 640
+# ... and outline the sleeves of the running-away frames with that same 83 58 51: the shirt there
+seed shirt     27.4   9.8   8.6 1.5   # 83 58 51
+not hair      48 554 64 560
+not hair      68 554 82 560
+not hair      142 521 170 528
+not hair      240 552 254 558
+not hair      257 552 271 558
+not hair      364 520 381 526
+not hair      384 520 398 526
