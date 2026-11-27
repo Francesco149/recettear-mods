@@ -1,0 +1,32 @@
+# Wardrobe presets: 'palette NAME' then REGION #rrggbb lines (unlisted regions stay Original).
+palette Midnight
+hair    #2b2d42
+eyes    #3a6ea5
+shirt   #dfe4ee
+top     #3d405b
+tie     #c9a227
+apron   #22356b
+skirt   #1b1f3b
+bobbles #8ecae6
+boots   #3b2f2f
+
+palette Sakura
+hair    #f2a7c3
+eyes    #b5487a
+shirt   #fff5f8
+top     #f7c6d9
+tie     #e0457b
+apron   #ffffff
+skirt   #c24a7b
+bobbles #ff6fa5
+
+palette Forest
+hair    #c8923a
+eyes    #2f7a3d
+shirt   #f1ead0
+top     #6b4f2a
+tie     #a33b20
+apron   #2f5d34
+skirt   #4a3626
+bobbles #e0b13a
+boots   #2a1d14

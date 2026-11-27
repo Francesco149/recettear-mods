@@ -1,30 +1,29 @@
 # wardrobe
 
-Recolour Recette by region, everywhere she appears. UI per the owner's reference: a game-style list —
-Hair, Eyes, Skin, Shirt, Top, Tie, Apron, Skirt, Hair bobbles, Boots & belt — each `Original` or a colour
-(`#RRGGBB` + swatch), Left/Right steps a curated palette, Button 3 switches palette ↔ fine hue/value edit,
-Reset All, Done. Opened from a new pause-menu entry. Live preview on her field sprite. Render-only.
+Recolour Recette by region, everywhere she appears. A game-style page — Preset, then Hair, Eyes, Skin, Shirt, Top,
+Tie, Apron, Skirt, Hair bobbles, Boots & belt, each `Original` or a colour (`#RRGGBB` + swatch), Left/Right steps a
+curated palette, Button 3 switches palette → hue → lightness → saturation edit, Reset All — in the title and pause
+Options (Up from the top row, Left/Right to "Wardrobe"). Live preview: her field sprite (front + back) beside the page,
+recoloured as you step. Render-only.
 
-## Facts (loader ENGINE-MAP "Recette's images")
-All her art is **truecolour** (24-bit BMP sheet `bmp/chr/chr00.bmp`, 32-bit TGA standees
-`bmp/ivent/01recette_00..07.tga`, more to inventory) — no palette to swap. So: region masks + recolour.
+## As built (S8, 0.1.0)
+- **Pictures** (inventory: loader ENGINE-MAP "Recette's images"): the field sheet `bmp/chr/chr00.bmp` (resident; reloaded
+  live), the 8 standees `bmp/ivent/01recette_0?.tga`, the kneeling chibi `bmp/ivent/dot_recet0?.tga`, the pause art
+  `bmp/pause_bg_rete.tga`. Not covered: `bg_recettear.bmp` (Recette over a painted town: the background shares her colours,
+  rects can't separate them), the ending screenshots `end_ss*`, the face icons in `hpmp_base.tga`.
+- **Rules, not pixels** (`regions.txt`, grammar in the loader's `core/recolor.h`): global LAB seeds per region; per image
+  `only` / `not` / `none` rects (bobbles vs the red apron, eyes vs hair, the gold fittings vs the shirt, Tear and the shop
+  sign out); the field sheet is ~90-colour pixel art, so its block names each palette colour (tight seeds).
+- **No mask files**: segmentation runs in C at load (memoised per colour: the field sheet ≈ 15 ms under wine), so nothing
+  derived is ever written to disk — the first-run mask step and its consent prompt aren't needed.
+- **Recolour**: per region, LAB: lightness mapped piecewise so the region's mean lands on the target's (shading kept),
+  chroma rotated + scaled from the region's mean hue to the target's; soft weights at region edges. "Original" for every
+  region = D3DX gets the untouched file bytes (texture hash = vanilla's).
+- Presets in `palettes.txt` (Midnight, Sakura, Forest); editing a region from a preset copies it into Custom.
+- Settings in `rml_mods.cfg` (`wardrobe.preset`, `wardrobe.<region>` = `#rrggbb` / empty).
+- Authoring: `tools/wardrobe/wardrobe.py --src <your extracted data> overlay | sheet | lab` (the loader's kernel via
+  ctypes: `make -C ../recettear-mod-loader/tools/librecolor`).
 
-## Pipeline
-1. **Inventory (S8 RE):** every texture path that shows Recette (log the loader's texture hook across a
-   probe corpus; candidates by name: `dot_recet*`, `recetter.tga`, `pause_bg_rete.tga`, `chibi_*`,
-   `end_ss*`, title art).
-2. **Rules, not pixels (invariant 9):** `mods/wardrobe/regions.json` — per image: seed colours per region in
-   LAB with tolerances, optional per-image rectangles (eyes vs. same-coloured bobbles), edge feathering.
-   Authored with `tools/wardrobe/` (segments the user's own extracted images, renders an overlay sheet for
-   human review). Ships only the rules.
-3. **First run:** build soft masks from the user's files → `mod_data\wardrobe\masks\` (consent prompt).
-4. **At load:** asset-layer `transform` on those paths: per pixel, per region weight — keep the pixel's
-   lightness offset from the region's mean, replace hue/chroma by the target's (LAB), blend by mask
-   weight. "Original" for every region = the untouched bytes (byte-identical check).
-5. **Live:** a change re-runs the game's loader for the affected slots (`mod.assets.reload`).
-
-Works over HD textures (masks upscaled with the pack, or recolour before upscale — decided in S9).
-
-## Gate (S8)
-Contact sheet: every Recette image × 3 palettes + Original — owner eyes. Persists across scenes, restarts,
-device reset.
+## Deviations from the S0 spec
+- Opened from the Options pages, not a new pause-menu entry (pause-menu entries are still unbuilt).
+- No first-run mask files / consent prompt (masks are computed in memory at load from the rules).
