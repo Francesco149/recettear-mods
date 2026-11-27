@@ -1,0 +1,9 @@
+[mod]
+id = "showcase_shots"
+name = "Showcase shots (tool)"
+version = "0.1.0"
+description = "Scripted screenshots for the README (tools/showcase/shots/plan.lua). Not an installable mod."
+render_only = false
+
+[loader]
+api = "1.11"
