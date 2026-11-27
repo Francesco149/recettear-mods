@@ -11,7 +11,7 @@ plan), `showcase.py` (edit), the loader's `tools/win_steam.py` (runs on cutestat
 - Music: the game's own shop theme (the user's `bgm/open.wav`, looped by restarting it, as the game does). Owner's
   call for an un-monetised fan video; never commit it.
 - Three files: `showcase_1080p60.mp4` (YouTube), `showcase_discord.mp4` (under 20 MB), `showcase_readme.mp4`
-  (**under 10 MB**: GitHub's README upload limit; 720p30).
+  (**under 10 MB**: GitHub’s README upload limit; 720p60 — owner 2026-11-27: 60 fps is worth the bitrate; fine texture is a little softer than at 30).
 - High refresh is shown by the slow-motion wipe from the owner's camera recording (`hirefresh.py` `SECTIONS[1]`); the
   full comparison stays its own video.
 

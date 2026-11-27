@@ -9,7 +9,7 @@ CLIPS_DIR = the fetched out/ of a video/ run (title, wide, display, free, fp, wp
 HIREFRESH.MOV = the camera recording hirefresh.py cuts (its slow-motion section is reused here); MUSIC.wav = the
 user's own bgm/open.wav (looped as the game loops it).  Nothing derived from the game goes into the repo.
 Output: OUTDIR/showcase_1080p60.mp4 (YouTube: x264 crf 15, AAC 320k), showcase_discord.mp4 (720p60, 2-pass, under
-20 MB) and showcase_readme.mp4 (720p30, 2-pass, under 10 MB: GitHub's README upload limit).
+20 MB) and showcase_readme.mp4 (720p60, 2-pass, under 10 MB: GitHub's README upload limit).
 
 Each segment is rendered on its own (clip + captions drawn with Pillow, animated by ffmpeg), then the segments are
 cross-faded into one timeline.  Captions sit where the picture is idle (the void beside the shop, the blurred pause
@@ -310,7 +310,7 @@ def small(final, out, dur, mb, height=720, fps=60, akb=128):
 def copies(final, outdir, dur):
     """the two small copies: Discord (under 20 MB) and the GitHub README (its upload limit is 10 MB)"""
     small(final, os.path.join(outdir, "showcase_discord.mp4"), dur, DISCORD_MB)
-    small(final, os.path.join(outdir, "showcase_readme.mp4"), dur, README_MB, fps=30, akb=96)
+    small(final, os.path.join(outdir, "showcase_readme.mp4"), dur, README_MB, akb=96)
 
 
 def main():
