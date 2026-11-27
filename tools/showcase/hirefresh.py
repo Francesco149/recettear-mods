@@ -6,11 +6,12 @@ Source (not in the repo): a 180 fps phone recording of a 144 Hz VG248QE, stored 
 
   tools/showcase/hirefresh.py SRC.MOV [-o OUTDIR] [--fps 60|180|both] [--preview]
 
-Output: OUTDIR/hirefresh_60.mp4 (any player; the real-time parts blend the three camera frames behind each output
+Output (default 60): OUTDIR/hirefresh_60.mp4 (any player; the real-time parts blend the three camera frames behind each output
 frame = what the eye integrates in 1/60 s) and/or hirefresh_180.mp4 (every camera frame: real time at 180 fps, for
 high-refresh viewers).  Slow-motion parts run at the file's own speed (1/3) in both.
 
-Sections: title · side by side stock | 144 (real time, slow motion) · 144 | 240 (real time, slow motion) ·
+Side-by-side panes = the 4:3 middle of the screen, letterboxed (labels / banner in the bars); the wipes are
+full screen.  Sections: title · side by side stock | 144 (real time, slow motion) · 144 | 240 (real time, slow motion) ·
 full-screen wipes stock → 144 → 240 (real time) · end card.  The clip windows (file seconds) were picked for matching
 mouse motion (similar pans in both panes) — see CLIPS.
 """
@@ -60,10 +61,14 @@ def timing(kind, fps):
     return f"setpts=PTS-STARTPTS,fps={out}"
 
 
-def pane(i, mode, start, length, kind, fps, w, crop):
+SBS_W, SBS_H = 956, 717            # a side-by-side pane: the 4:3 middle (1440×1080) scaled, letterboxed in 960×1080
+
+
+def pane(i, mode, start, length, kind, fps, sbs):
     f = f"[0:v]trim=start={start}:duration={length},{timing(kind, fps)}"
-    if crop:
-        f += f",crop={w}:1080:{(1920 - w) // 2}:0"
+    if sbs:   # the 4:3 middle of the screen (where the game's view is): bigger motion per pixel than a centre slice
+        f += f",crop=1440:1080:240:0,scale={SBS_W}:{SBS_H}:flags=lanczos"
+        f += f",pad=960:1080:{4 if i else 0}:{(1080 - SBS_H) // 2}:black"
     f += "," + text(LABEL[mode], 28, 28, 44)
     f += "," + text(SUB[mode], 28, 98, 28, FONT_M)
     return f + f"[p{i}]"
@@ -80,14 +85,14 @@ def banner(kind, fps):
 
 def side_by_side(a, b, length, kind, fps):
     (ma, sa), (mb, sb) = a, b
-    g = ";".join([pane(0, ma, sa, length, kind, fps, 956, True), pane(1, mb, sb, length, kind, fps, 956, True)])
-    g += ";[p0]pad=960:1080:0:0:black[q0];[p1]pad=960:1080:4:0:black[q1];[q0][q1]hstack," + banner(kind, fps) + "[v]"
+    g = ";".join([pane(0, ma, sa, length, kind, fps, True), pane(1, mb, sb, length, kind, fps, True)])
+    g += ";[p0][p1]hstack," + banner(kind, fps) + "[v]"
     return g
 
 
 def wipes(clips, length, fps):
     fade = 0.5                       # on screen
-    parts = [pane(i, m, s, length + 3 * fade, "rt", fps, 1920, False) for i, (m, s) in enumerate(clips)]
+    parts = [pane(i, m, s, length + 3 * fade, "rt", fps, False) for i, (m, s) in enumerate(clips)]
     on = length / 3 + fade           # seconds on screen per clip incl. the overlap
     g = ";".join(parts)
     g += f";[p0][p1]xfade=transition=wipeleft:duration={fade}:offset={on - fade}[x1]"
@@ -156,7 +161,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("src")
     ap.add_argument("-o", "--outdir", default=os.path.expanduser("~/Videos/showcase"))
-    ap.add_argument("--fps", default="both", choices=["60", "180", "both"])
+    ap.add_argument("--fps", default="60", choices=["60", "180", "both"])
     ap.add_argument("--preview", action="store_true", help="fast encode")
     a = ap.parse_args()
     os.makedirs(a.outdir, exist_ok=True)
