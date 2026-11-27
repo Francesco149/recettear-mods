@@ -8,8 +8,10 @@ game folder. You need your own copy of the game; the game exe and your saves are
 **Install:** [step by step in the loader's README](https://github.com/Francesco149/recettear-mod-loader#get-it-running-steam-install-2-minutes)
 — get the loader's release, run `recettear-launcher.exe`, install mods from *Browse*, press *Launch game*.
 
-**Showcase video:** [watch](https://github.com/Francesco149/recettear-mod-loader/releases/download/v0.1.0/showcase_readme.mp4)
+**Showcase video:** [watch](https://www.youtube.com/watch?v=Cw2M7eUKftc)
 (1 minute, every mod in the real game).
+
+https://github.com/user-attachments/assets/7e556581-11a2-489b-9895-ae46be622a9a
 
 | mod | what |
 |---|---|
