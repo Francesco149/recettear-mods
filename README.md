@@ -20,6 +20,7 @@ https://github.com/user-attachments/assets/7e556581-11a2-489b-9895-ae46be622a9a
 | [`first-person`](#first-person) | walk your shop in first person: mouse look, WASD |
 | [`wardrobe`](#wardrobe) | recolour Recette by region (hair, eyes, clothes), everywhere she appears |
 | [`unlock-menu`](#unlock-menu) | the full title menu whatever your saves hold |
+| [`rebalance`](mods/rebalance/README.md) | **in development, feedback wanted**: the hidden rules explained, friction fixes, optional balance settings |
 
 All screenshots below are the real game at 1920×1080, taken by `tools/showcase/shots/` (the preset strip: frames of
 the showcase video's capture, `tools/showcase/video/`).

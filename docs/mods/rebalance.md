@@ -3,6 +3,7 @@
 **Status: draft, nothing is built yet.** This is a proposal for a mod for the original PC Recettear (Steam
 EN 1.108) running on [recettear-mod-loader](https://github.com/Francesco149/recettear-mod-loader). Tell us
 what you would turn on, what you would never touch, and what is missing: open an issue on this repo.
+Short version and progress: [mods/rebalance](../../mods/rebalance/README.md).
 
 The mod has three goals:
 
