@@ -1,29 +1,89 @@
 # recettear-mods
 
-Mods for *Recettear: An Item Shop's Tale*, built on the
-[**Recettear Mod Loader**](../recettear-mod-loader). This repo is a **mod source**: `registry.json` lists
-the mods for the loader's launcher (format: the loader's `docs/REGISTRY.md`, same as sotes').
+Mods for *Recettear: An Item Shop's Tale* (Steam, English 1.108), built on the
+[**Recettear Mod Loader**](https://github.com/Francesco149/recettear-mod-loader). This repo is a **mod source**:
+`registry.json` lists the mods for the loader's launcher, which downloads them (every file sha256-pinned) into your
+game folder. You need your own copy of the game; the game exe and your saves are never modified.
 
-## Status — S0 (design)
+**Install:** get the loader's release, run `recettear-launcher.exe`, install mods from *Browse*, press *Launch game*.
 
-Specs only; implementation follows the loader's session plan (`../recettear-mod-loader/docs/SESSIONS.md`).
+| mod | what |
+|---|---|
+| [`display`](#display-settings) | a Display Settings page in the game's own Options: display mode, resolution, widescreen, render scale, VSYNC, frame rate up to your display's refresh rate |
+| [`free-camera`](#free-camera) | an extra camera in the shop's Button-4 cycle: turn, zoom, raise |
+| [`first-person`](#first-person) | walk your shop in first person: mouse look, WASD |
+| [`wardrobe`](#wardrobe) | recolour Recette by region (hair, eyes, clothes), everywhere she appears |
+| [`unlock-menu`](#unlock-menu) | the full title menu whatever your saves hold |
 
-## The first mods (quality-of-life proof of concept)
+All screenshots below are the real game at 1920×1080, taken by `tools/showcase/shots/`.
 
-| mod | what | spec | session |
-|---|---|---|---|
-| `unlock-menu` | every title-menu entry (NG+, Survival, Survival Score) regardless of progress | [spec](docs/mods/unlock-menu.md) | S2 |
-| `display` | Display Settings page in the game's Options: resolution, display mode, frame rate, aspect, render scale, VSYNC, HD textures, HUD anchor | [spec](docs/mods/display.md) | S3–S5, S10 |
-| `free-camera` | an extra camera mode in the shop's Button-4 cycle: orbit, zoom, height | [spec](docs/mods/free-camera.md) | S6 |
-| `first-person` | another extra mode: first person with a wide FOV, mouse look, WASD | [spec](docs/mods/first-person.md) | S7 |
-| `wardrobe` | recolour Recette by region (hair, eyes, skin, shirt, top, tie, apron, skirt, bobbles, boots & belt) everywhere she appears | [spec](docs/mods/wardrobe.md) | S8 |
-| `hd-textures` | AI-upscaled textures, generated on your machine from your copy | [spec](docs/mods/hd-textures.md) | S9 |
+## Display Settings
 
-## Showcase
+A page in the game's own Options menu (title and pause), drawn with the game's own panels and font. Changes apply
+live.
 
-(Screenshots land here as each mod ships — S12.)
+![Display Settings page](docs/img/page_display.jpg)
+
+**Widescreen.** The 3D view is widened (Hor+), the HUD moves to the screen's edges, 4:3 pictures are zoomed,
+pillarboxed or stretched as you choose. The game's own 4:3 picture, then 16:9:
+
+![4:3](docs/img/shop_4x3.jpg)
+![16:9](docs/img/shop_wide.jpg)
+
+**High refresh rate.** The game simulates at 60 ticks a second; with Frame Rate on *Auto* the frames in between are
+interpolated up to your display's refresh rate (144 Hz, 240 Hz, …) without changing the game's speed. *60 (stock)*
+keeps the game's own pacing.
+
+**Also:** borderless / exclusive fullscreen / windowed, any resolution, render scale (supersampling) 1–4×, VSYNC,
+24-bit depth buffer.
+
+## Free Camera
+
+Button 4 in the shop cycles the game's two cameras; this adds a third you can turn (`[` `]` or right-drag), zoom
+(PgUp / PgDn / wheel) and raise (Home / End). Walking stays camera-relative; cutscenes hand back to the game's
+camera.
+
+![Free camera](docs/img/free_camera_1.jpg)
+![Free camera, from the side](docs/img/free_camera_2.jpg)
+
+## First Person
+
+Another camera in the same cycle, at Recette's eyes: mouse look (at your display's refresh rate), WASD, left click =
+talk / confirm, right click or Tab = menu. Field of view, sensitivity and eye height are on its own Options page.
+
+![First person](docs/img/first_person_1.jpg)
+![First person, the counter](docs/img/first_person_2.jpg)
+![First Person page](docs/img/page_first_person.jpg)
+
+## Wardrobe
+
+Recolour Recette's hair, eyes, skin, shirt, top, tie, apron, skirt, bobbles and boots: presets or your own colour
+per region, with a live preview. The recolour keeps the artwork's shading and is applied to your own game files as
+they load — nothing is written to the game folder, and no game art is in this repo (the mod ships rules, not pixels).
+
+![Wardrobe page](docs/img/page_wardrobe.jpg)
+
+Original and the *Midnight* preset in the shop:
+
+![Original and Midnight](docs/img/wardrobe_before_after.jpg)
+![The shop with Midnight](docs/img/camera_low_midnight.jpg)
+
+## Unlock Menu
+
+All 8 title-menu entries from the start; New Game+ and Survival can start from any slot (an empty slot = a fresh
+start). Writes nothing to `save.dat`.
+
+![Title menu](docs/img/title_menu.jpg)
+
+## For mod authors
+
+Mods are Lua (LuaJIT) on the loader's API: see the loader's
+[`docs/MOD-FORMAT.md`](https://github.com/Francesco149/recettear-mod-loader/blob/master/docs/MOD-FORMAT.md). Each
+mod here is one small folder under [`mods/`](mods/); specs in [`docs/mods/`](docs/mods/). `registry.json` is
+generated by `tools/registry/registry.py`.
 
 ## Legal
 
-No game files or anything derived from them are in this repo. Mods that need game-derived data (the HD
-pack, the wardrobe's region masks) generate it on your machine from your own copy, after asking.
+MIT (see [LICENSE](LICENSE)). No game files or anything derived from them are in this repo, apart from the
+screenshots above. Mods that need game-derived data (the wardrobe's recoloured images) generate it on your machine
+from your own copy.
