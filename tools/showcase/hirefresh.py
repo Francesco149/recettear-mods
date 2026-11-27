@@ -6,14 +6,11 @@ Source (not in the repo): a 180 fps phone recording of a 144 Hz VG248QE, stored 
 
   tools/showcase/hirefresh.py SRC.MOV [-o OUTDIR] [--fps 60|180|both] [--preview]
 
-Output (default 60): OUTDIR/hirefresh_60.mp4 (any player; the real-time parts blend the three camera frames behind each output
-frame = what the eye integrates in 1/60 s) and/or hirefresh_180.mp4 (every camera frame: real time at 180 fps, for
-high-refresh viewers).  Slow-motion parts run at the file's own speed (1/3) in both.
-
-Side-by-side panes = the 4:3 middle of the screen, letterboxed (labels / banner in the bars); the wipes are
-full screen.  Sections: title · side by side stock | 144 (real time, slow motion) · 144 | 240 (real time, slow motion) ·
-full-screen wipes stock → 144 → 240 (real time) · end card.  The clip windows (file seconds) were picked for matching
-mouse motion (similar pans in both panes) — see CLIPS.
+Every comparison is a full-screen wipe (owner 2026-11-27: easier to notice than side by side): title · real time
+stock → 144 → 240 · slow motion (1/3, the file's own speed) stock → 144 → 240 on ONE timeline — the three recordings
+of the same door → shelves turn, aligned by motion-energy cross-correlation, so the turn carries on across each wipe
+and only the frame rate changes · end card.  Output OUTDIR/hirefresh_60.mp4: the real-time part blends the three
+camera frames behind each output frame (what the eye integrates in 1/60 s); `--fps 180` keeps every camera frame.
 """
 import argparse, os, subprocess, sys
 
@@ -32,14 +29,10 @@ SUB = {
     "144": "interpolated, one frame per refresh",
     "240": "interpolated; tears on a 144 Hz panel",
 }
-# file seconds (start, length): real time windows are 3× longer in the file than on screen
-CLIPS = {
-    "sbs1_rt": (("stock", 18.0), ("144", 45.0), 12.0),     # 4 s on screen
-    "sbs1_slow": (("stock", 25.3), ("144", 50.5), 5.0),    # shelves pans (motion-energy cross-correlation)
-    "sbs2_rt": (("144", 45.0), ("240", 86.0), 12.0),
-    "sbs2_slow": (("144", 52.8), ("240", 89.17), 5.0),     # the same turn, aligned by motion-energy cross-correlation
-    "wipe": ((("stock", 19.5), ("144", 48.0), ("240", 89.0)), 9.0),   # file s per clip: 3 s each on screen (+ the fade)
-}
+# file seconds where each clip starts
+RT = (("stock", 17.0), ("144", 47.0), ("240", 88.0))          # real time: separate looks around the shop
+SLOW = (("stock", 20.39), ("144", 52.8), ("240", 89.17))      # the same turn in all three (one timeline)
+RT_EACH, SLOW_EACH, FADE = 4.0, 3.0, 0.5                      # seconds on screen per clip / per wipe
 
 
 def esc(s):
@@ -61,14 +54,8 @@ def timing(kind, fps):
     return f"setpts=PTS-STARTPTS,fps={out}"
 
 
-SBS_W, SBS_H = 956, 717            # a side-by-side pane: the 4:3 middle (1440×1080) scaled, letterboxed in 960×1080
-
-
-def pane(i, mode, start, length, kind, fps, sbs):
+def pane(i, mode, start, length, kind, fps):
     f = f"[0:v]trim=start={start}:duration={length},{timing(kind, fps)}"
-    if sbs:   # the 4:3 middle of the screen (where the game's view is): bigger motion per pixel than a centre slice
-        f += f",crop=1440:1080:240:0,scale={SBS_W}:{SBS_H}:flags=lanczos"
-        f += f",pad=960:1080:{4 if i else 0}:{(1080 - SBS_H) // 2}:black"
     f += "," + text(LABEL[mode], 28, 28, 44)
     f += "," + text(SUB[mode], 28, 98, 28, FONT_M)
     return f + f"[p{i}]"
@@ -83,20 +70,18 @@ def banner(kind, fps):
                  "h-th-40", 28, FONT_M))
 
 
-def side_by_side(a, b, length, kind, fps):
-    (ma, sa), (mb, sb) = a, b
-    g = ";".join([pane(0, ma, sa, length, kind, fps, True), pane(1, mb, sb, length, kind, fps, True)])
-    g += ";[p0][p1]hstack," + banner(kind, fps) + "[v]"
-    return g
-
-
-def wipes(clips, length, fps):
-    fade = 0.5                       # on screen
-    parts = [pane(i, m, s, length + 3 * fade, "rt", fps, False) for i, (m, s) in enumerate(clips)]
-    on = length / 3 + fade           # seconds on screen per clip incl. the overlap
+def wipe(clips, kind, each, fps, continuous):
+    """three full-screen clips, wiping left at each·1 and each·2 (on-screen seconds).  continuous: clip k starts
+    where the timeline is (its base + k·each), so one motion carries on across the wipes"""
+    scale = 3 if kind == "rt" else 1        # file seconds per on-screen second
+    parts = []
+    for k, (m, base) in enumerate(clips):
+        length = each + (FADE if k < 2 else 0)
+        start = base + (k * each * scale if continuous else 0)
+        parts.append(pane(k, m, start, length * scale, kind, fps))
     g = ";".join(parts)
-    g += f";[p0][p1]xfade=transition=wipeleft:duration={fade}:offset={on - fade}[x1]"
-    g += f";[x1][p2]xfade=transition=wipeleft:duration={fade}:offset={2 * on - 2 * fade},{banner('rt', fps)}[v]"
+    g += f";[p0][p1]xfade=transition=wipeleft:duration={FADE}:offset={each}[x1]"
+    g += f";[x1][p2]xfade=transition=wipeleft:duration={FADE}:offset={2 * each},{banner(kind, fps)}[v]"
     return g
 
 
@@ -127,18 +112,14 @@ def render(src, outdir, fps, preview):
     title = card([("Recettear Mod Loader — high refresh", 64, FONT_B),
                   ("Above 60 Hz the loader interpolates between the game's 60 ticks per second", 34, FONT_M),
                   ("Filmed at 180 fps off a 144 Hz monitor (VG248QE)", 30, FONT_M)]
-                 + ([("This 60 fps cut blends 3 camera frames into each video frame: the extra frames show as smooth blur.", 26, FONT_M),
-                     ("The 180 fps cut keeps every camera frame — watch it on a high-refresh screen.", 26, FONT_M)]
-                    if fps == 60 else []), 5.0 if fps == 60 else 4.0, fps)
+                 + ([("Real time at 60 fps: each video frame blends 3 camera frames, so the extra frames show as smooth blur.", 26, FONT_M)]
+                    if fps == 60 else []), 5.0, fps)
     end = card([("Display Settings  >  Frame Rate: Auto", 52, FONT_B),
                 ("follows the monitor; the game logic stays at 60", 34, FONT_M)], 3.0, fps)
-    jobs = [("00_title", None, title)]
-    for i, k in enumerate(["sbs1_rt", "sbs1_slow", "sbs2_rt", "sbs2_slow"]):
-        a, b, length = CLIPS[k]
-        jobs.append((f"{i + 1:02d}_{k}", src, side_by_side(a, b, length, "rt" if k.endswith("rt") else "slow", fps)))
-    c, length = CLIPS["wipe"]
-    jobs.append(("05_wipe", src, wipes(c, length, fps)))
-    jobs.append(("06_end", None, end))
+    jobs = [("00_title", None, title),
+            ("01_wipe_rt", src, wipe(RT, "rt", RT_EACH, fps, False)),
+            ("02_wipe_slow", src, wipe(SLOW, "slow", SLOW_EACH, fps, True)),
+            ("03_end", None, end)]
     names = []
     for name, inp, graph in jobs:
         out = os.path.join(parts, name + ".mp4")
