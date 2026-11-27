@@ -102,6 +102,20 @@ local function pose(p)
   return true
 end
 
+-- per display refresh above 60 Hz (loader S10.1): the eye stays the frame's (lerped between ticks), the look direction
+-- takes the mouse motion that came in since the tick (input.mouse_pending), so turning runs at the display rate
+local function late(p)
+  if st.blend < 1 or not st.free then return false end
+  local dx, dy = 0, 0
+  if st.captured and input.mouse_pending then local m = input.mouse_pending(); dx, dy = m.dx, m.dy end
+  local sens = (cfg.get("sensitivity") or 1) * 0.0025
+  local yaw = p.yaw + dx * sens
+  local pitch = clamp(st.pitch - dy * sens * (cfg.get("invert_y") and -1 or 1), -PITCH_MAX, PITCH_MAX)
+  local cp, e, t = math.cos(pitch), p.eye, p.target
+  t[1], t[2], t[3] = e[1] - math.sin(yaw) * cp * 4, e[2] + math.sin(pitch) * 4, e[3] + math.cos(yaw) * cp * 4
+  return true
+end
+
 local HELP = { "FIRST PERSON", "mouse : look      W A S D : walk", "left click : talk / confirm",
                "right click / Tab : menu", "Backspace : level the view", "Button 4 : next camera" }
 local RET = { { 319, 232, 2, 5 }, { 319, 243, 2, 5 }, { 312, 239, 5, 2 }, { 323, 239, 5, 2 } }
@@ -124,7 +138,7 @@ cam.add_mode{
     capture(false); block(false); party.hide_self(false); cam.set_projection(nil)
     mod.log("first person off")
   end,
-  on_tick = tick, pose = pose, draw = draw }
+  on_tick = tick, pose = pose, late = late, draw = draw }
 _G.first_person = st   -- tests / dev console
 
 -- ── the "First Person" page in retail's Options (title + pause): live settings ──

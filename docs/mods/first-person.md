@@ -46,3 +46,9 @@ Built as specified, with:
   display menu, the counter menu). Customers are served in retail's own cinematic: the camera hands back there.
 - Not render-only (the yaw and the idle facing are game state), as with a turned free camera.
 - No right-stick look (retail reads only the left stick; the loader exposes no axes). Owner feel check pending.
+
+## 0.2 (S10.1 — 2026-11-27)
+
+Above 60 Hz (display Frame Rate Auto on a high-refresh monitor) the view is re-aimed per display refresh (`late(p)`,
+loader API 1.10): the look direction takes the mouse motion since the last game tick, so mouse look runs at the
+display rate with no added lag; the eye position is interpolated between ticks. Pad turning still steps per tick.
