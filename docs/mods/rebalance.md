@@ -1,6 +1,6 @@
 # Rebalance + QoL (working title) — design draft for feedback
 
-**Status: draft; 1.1 and 1.6 are built (mod 0.1.0), the rest is not.** This is a proposal for a mod for the original PC Recettear (Steam
+**Status: draft; 1.1, 1.2, 1.3, 1.6, 1.7 and 1.8 are built (mod 0.2.0), the rest is not.** This is a proposal for a mod for the original PC Recettear (Steam
 EN 1.108) running on [recettear-mod-loader](https://github.com/Francesco149/recettear-mod-loader). Tell us
 what you would turn on, what you would never touch, and what is missing: open an issue on this repo.
 Short version and progress: [mods/rebalance](../../mods/rebalance/README.md).
@@ -137,9 +137,15 @@ Controls, key config, mouse, resolution and frame rate are the `display` mod's j
   min + (max − min) × reputation level / 10, checked at ×1.2; reputation +5 / +2 / +1 by how close the
   price is to the customer's target; order slots; the three places time advances.
 
-Three things players report differently from each other, which we will measure in the game before building
-on them: whether a dungeon trip and shop periods fit in one day on every route (1.7), how orders are
-generated, and exactly when Euria appears.
+Measured for 1.7 (2026-11-28, on recorded sessions): any number of town stops costs 1 period, charged when
+you get home; a dungeon run costs 2 and puts you back on the map owing nothing; a stop made before the
+Adventurer's Guild makes the run 3; a stop after the run costs the usual 1. The map's own box says "This
+action will not take any time" and "2 periods" in all of these cases. Also measured for 1.3: the combo
+counts deals accepted on the first offer, at any price grade; any customer who haggles back or leaves
+without a deal ends it.
+
+Two things players report differently from each other, which we will measure in the game before building
+on them: how orders are generated, and exactly when Euria appears.
 
 ## 7. Questions for you
 
@@ -164,11 +170,11 @@ are in openrecet `docs/findings/`, new facts get recorded there):
 |---|---|---|
 | `mod.config` ✅ | Declarative settings (type, default, presets, help) → Options page, load / save, per-save overrides | every row |
 | `mod.store` ✅ | Per-save side data keyed to the save slot, following retail's save / load / bank backups / Clear Save Data; the save file itself stays vanilla | 1.2, 3.1, 3.2, 4.5 |
-| `mod.ui.native` additions | Pause-menu pages ✅, HUD drawing in the shop ✅ (`on_draw`); toast / result line, confirm box, world-space labels, HUD bars | 1.1–1.10, 4.2, 4.3 |
+| `mod.ui.native` additions | Pause-menu pages ✅, HUD drawing in the shop ✅ and on the town map ✅ (`on_draw`), toast / result line ✅; confirm box, world-space labels, HUD bars | 1.1–1.10, 4.2, 4.3 |
 | `mod.text` | Replace or add dialogue lines and item descriptions by script id; first-time tips | 1.4, 1.10 |
-| `mod.game.customers` | `budget(id)` (retail's `0x45ecc0`) ✅, `reputation(id)` / `roster()` ✅, `on_deal{grade, rep, xp, combo}`, `on_combo_break{reason}` (cancellable), `set_closeness`, pick filter `on_pick{item}` | 1.1–1.5, 2.1, 2.3, 2.5 |
-| `mod.game.orders` | Slots (10 × 20 bytes at bank + 173560), `on_due`, `on_clear` (cancellable → late pickup) | 1.8, 2.2 |
-| `mod.game.time` | `on_advance{site, cost}` over the three sites (shop sale, town return, dungeon exit), `cost(dest)` preview | 1.7 |
+| `mod.game.customers` | `budget(id)` (retail's `0x45ecc0`) ✅, `reputation(id)` / `roster()` ✅, `on_deal{grade, rep, xp, combo}` ✅, `on_combo_break{reason}` (cancellable), `set_closeness`, pick filter `on_pick{item}` | 1.1–1.5, 2.1, 2.3, 2.5 |
+| `mod.game.orders` | Slots (10 × 20 bytes at bank + 173560) ✅, `on_morning` ✅, `on_clear` (cancellable → late pickup) | 1.8, 2.2 |
+| `mod.game.time` | `cost(dest)` preview ✅, `period` / `owed` ✅; `on_advance{site, cost}` over the sites (shop session, walk home, dungeon departure and exit) | 1.7 |
 | `mod.game.debt` | Schedule override (`0x48d997`), `on_payment{due, gold}` (editable), `on_gameover`, loop count | 3.1, 3.2 |
 | `mod.game.events` | Seen flags per script, `on_start` (skippable) | 3.3 |
 | `mod.game.dungeon` additions | `on_floor`, `on_defeat{keep}` (editable), `on_boss_kill`, drops list, follower visibility | 4.1–4.6 |

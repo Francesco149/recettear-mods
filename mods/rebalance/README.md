@@ -4,8 +4,9 @@ A mod for the original PC *Recettear* that explains the rules the game hides, re
 real decision, and offers balance options that are off unless you pick them. Every change is its own
 switch on an in-game Options page. Saves stay loadable by the unmodded game.
 
-**The first rows are in** (version 0.1.0, in this repository; it needs the next mod loader release): the settings
-page with presets, the customer ledger and the buying / selling banner. This page tracks what is being built and why. The full design, with every
+**The information rows are in** (version 0.2.0, in this repository; it needs the next mod loader release): the settings
+page with presets, the customer ledger with deal history, the deal result line, the trip time on the town map,
+order reminders and the buying / selling banner. This page tracks what is being built and why. The full design, with every
 row and its default, is in [the design draft](../../docs/mods/rebalance.md).
 
 ## Tell us what you think
@@ -57,22 +58,36 @@ voices. Nothing in the mod shows you the accepted price before you make an offer
 | Design draft and feedback round | open |
 | Settings page with presets, per-save mod data, pause-menu pages (loader) | done |
 | Classic+ : customer ledger (pause menu → Customers), buying / selling banner | done (0.1.0) |
-| Classic+ : deal result line, deal history, time-cost preview, reminders, save protection | next |
+| Classic+ : deal result line, deal history, trip time on the town map, order reminders | done (0.2.0) |
+| Classic+ : honest tutorial lines, over-budget hint, news away from the shop, numbers on items, save protection | next |
 | Rebalanced: combo, late orders, gear, scene skipping, companions | not started |
 | Options: debt, extension, completion odds, expeditions | not started |
 | Dungeon features from the HD Edition | not started |
 
 Each step is published here as it lands, with the rows it adds.
 
-## What 0.1.0 does
+## What 0.2.0 does
 
 - **Options → Rebalance + QoL** (title and pause; Up from the top row, then Right): a Preset row (Rebalanced /
   Classic+ / Off) and one row per change.
 - **Customer Ledger**: a new "Customers" entry in the pause menu. One row per customer you have dealt with:
   reputation level 0–10 and the points toward the next level (a deal gives +5, +2 or +1 by how close your price was to
-  what they had in mind; a refusal or a third haggle round costs 1). Set the row to "Rep. + Budget" to also see what
+  what they had in mind; a refusal or a third offer costs 1). Set the row to "Rep. + Budget" to also see what
   each customer can pay now and at level 10.
+- **Deal History**: the ledger's line under each customer notes what you have seen them accept: the best and the
+  last price they paid you (as % of the base price) and the lowest they sold to you for. Kept with the save.
+- **Deal Result Line**: after each offer, one line above the shop: "Near pin! | Reputation +2 | EXP +17 (combo 1: +2)",
+  "They haggle | combo 3 lost", "More than they can pay | Reputation -1 (third offer)". Everything on it is what the
+  game computed; nothing is shown before you make the offer.
+- **Trip Time on the Map**: under the town map, what the place under the cursor really costs: "Free to enter. The
+  walk home will then take 1 period", "A dungeon run from here takes 3 periods: 2, and 1 for the stop you made".
+  With an order due today, its line shows there too.
+- **Order Reminders**: in the morning and when you load a save: "Order due today: Louie, 2 scarves" (also "due
+  tomorrow").
 - **Buy / Sell Banner**: "You are buying" or "You are selling" above the price dial, for shelf sales, requests,
   order pickups and customers selling to you.
 
-Nothing in 0.1.0 changes the simulation.
+One thing we learned while measuring: the combo counts deals accepted on your **first offer**, whatever the price
+(it is not only for "Just" prices). Any customer who haggles back or leaves without a deal ends it.
+
+Nothing in 0.2.0 changes the simulation.

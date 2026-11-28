@@ -1,13 +1,13 @@
 [mod]
 id = "rebalance"
 name = "Rebalance + QoL"
-version = "0.1.0"
-description = "Explains the rules the game hides and removes friction that isn't a decision; balance options are off unless you pick them. In development: this version has the customer ledger (pause menu) and the buying / selling banner. Every change is a row on its own Options page. Saves stay vanilla."
+version = "0.2.0"
+description = "Explains the rules the game hides and removes friction that isn't a decision; balance options are off unless you pick them. In development: this version has the customer ledger with deal history (pause menu), the deal result line and the buying / selling banner. Every change is a row on its own Options page. Saves stay vanilla."
 authors = ["openrecet"]
 target_games = ["recettear_steam_en_1108"]
 
 [loader]
-api = "1.12"
+api = "1.13"
 
 # Presets (docs/mods/rebalance.md): Classic+ = information and fixes only, no simulation number changes;
 # Rebalanced = Classic+ and the friction fixes.  The rows built so far are information only, so the two agree.
@@ -25,6 +25,38 @@ default = "hearts"
 label = "Customer Ledger"
 description = "A pause-menu page: what each customer thinks of you"
 preset_vanilla = "off"
+
+# 1.2 Deal history in the ledger
+[config.deal_history]
+type = "bool"
+default = true
+label = "Deal History"
+description = "The ledger notes the prices each customer has accepted"
+preset_vanilla = false
+
+# 1.3 Deal result line
+[config.deal_line]
+type = "bool"
+default = true
+label = "Deal Result Line"
+description = "After each offer: reputation and EXP, and why"
+preset_vanilla = false
+
+# 1.7 Time cost on the town map
+[config.time_cost]
+type = "bool"
+default = true
+label = "Trip Time on the Map"
+description = "The town map says what a stop or a dungeon run really costs"
+preset_vanilla = false
+
+# 1.8 Order reminders
+[config.order_reminders]
+type = "bool"
+default = true
+label = "Order Reminders"
+description = "A morning line when an order is due today or tomorrow"
+preset_vanilla = false
 
 # 1.6 Buying or selling shown in large on the haggle screen
 [config.deal_banner]
