@@ -198,41 +198,59 @@ ui.on_draw(function()
 end, "map")
 
 -- ── 1.8b Order tracker: orders in progress stay on screen, and have a page in the pause menu ──
--- The indicator sits top right in the shop (free roam and while the store is open; away during a customer's
--- haggle, where the item's stats go) and on the town map: the soonest order and how many more there are.
+-- R.pending(): every order still owed, soonest first — the active slots, and (once the store is open on the day,
+-- when the game clears the slot) the pickups waiting in this session's visit queue.
 local function when(o)
-  return o.days < 0 and "overdue" or o.days == 0 and "today" or o.days == 1 and "tomorrow" or ("in " .. o.days .. " days")
+  if o.coming then return o.late and "Late, coming in" or "Coming in today" end
+  return o.days < 0 and "Overdue" or o.days == 0 and "Today" or o.days == 1 and "Tomorrow" or ("In " .. o.days .. " days")
 end
-function R.tracker_text()
-  if not cfg.get("order_tracker") then return nil end
-  local l = game.orders.list()
-  local o = l[1]
-  if not o then return nil end
-  return ("Order %s: %s, %d %s"):format(when(o), o.name or "?", o.qty or 0, o.kind_name or "?") .. (#l > 1 and ("  +" .. (#l - 1) .. " more") or ""), o.days
+function R.pending()
+  local t = {}
+  for _, o in ipairs(game.orders.coming()) do o.coming = true; o.days = math.min(o.days or 0, 0); t[#t + 1] = o end
+  for _, o in ipairs(game.orders.list()) do t[#t + 1] = o end
+  return t
 end
-local TRACK = {
-  soon = { face = "Comic Sans MS", px = 14, weight = 900, top = 0xffffff, bottom = 0xffc0d8, edge_rgb = 0x2a0018, edge = 2, shadow = 2, fat = 1 },
-  due  = { face = "Comic Sans MS", px = 15, weight = 900, top = 0xfff6a0, bottom = 0xff7a3a, edge_rgb = 0x2a0c00, edge = 2, shadow = 2, fat = 1 },
-  far  = { face = "Comic Sans MS", px = 14, weight = 900, top = 0xffffff, bottom = 0xc9d4ff, edge_rgb = 0x14151c, edge = 2, shadow = 2, fat = 1 },
-}
-local function tracker_draw(y)
-  local text, days = R.tracker_text()
-  if not text then return end
-  local l = ui.label(text, days <= 0 and TRACK.due or days == 1 and TRACK.soon or TRACK.far)
-  if l then ui.draw_label(l, 632 - l.w / 2, y) end      -- right edge at 632
+-- The indicator: a short list in the top right corner (anchored to the screen edge like the game's own HUD): the
+-- two soonest orders by name, then where the rest is.  Shown in the shop and on the town map; away during a
+-- customer's haggle (the item's stats go there) and during dialogue.
+function R.tracker_lines()
+  if not cfg.get("order_tracker") then return {} end
+  local l, lines = R.pending(), {}
+  for i = 1, math.min(#l, 2) do
+    local o = l[i]
+    lines[i] = { text = when(o) .. ": " .. (o.name or "?"), days = o.days }
+  end
+  if #l > 0 then lines[#lines + 1] = { text = (#l > 2 and ("+" .. (#l - 2) .. " more, ") or "") .. "Pause: Notebook", hint = true } end
+  return lines
+end
+local function tk(px, top, bottom, edge) return { face = "Comic Sans MS", px = px, weight = 900, top = top, bottom = bottom, edge_rgb = edge, edge = 2, shadow = 2, fat = 1 } end
+local TRACK = { due = tk(14, 0xfff6a0, 0xff7a3a, 0x2a0c00), soon = tk(14, 0xffffff, 0xffc0d8, 0x2a0018), far = tk(14, 0xffffff, 0xc9d4ff, 0x14151c),
+                hint = tk(11, 0xffffff, 0xc4c9d8, 0x14151c) }
+local function tracker_draw()
+  local lines = R.tracker_lines()
+  if #lines == 0 then return end
+  ui.anchored("R", function()
+    local y = 14
+    for _, ln in ipairs(lines) do
+      local l = ui.label(ln.text, ln.hint and TRACK.hint or ln.days <= 0 and TRACK.due or ln.days == 1 and TRACK.soon or TRACK.far)
+      if l then ui.draw_label(l, 634 - l.w / 2, y) end      -- right edges on one line, 6 px from the screen edge
+      y = y + (ln.hint and 14 or 17)
+    end
+  end)
 end
 ui.on_draw(function()
   if game.customers.active() or game.scene.dialog() then return end
-  tracker_draw(22)
+  tracker_draw()
 end)
-ui.on_draw(function() tracker_draw(22) end, "map")
+ui.on_draw(tracker_draw, "map")
 function R.order_rows()
   local rows = {}
-  for _, o in ipairs(game.orders.list()) do
+  for _, o in ipairs(R.pending()) do
     local w = when(o)
     rows[#rows + 1] = { label = ("%s: %d %s"):format(o.name or "?", o.qty or 0, o.kind_name or "?"), order = o.index,
                         value = function() return w end,
-                        help = o.days <= 0 and "They come for it when you open the store" or "Have it in stock by then" }
+                        help = o.coming and "They are on their way: have it at hand" or o.days <= 0 and "They come for it when you open the store"
+                               or "Have it in stock by then" }
   end
   if #rows == 0 then
     rows[1] = { label = "No orders", center = true, enabled = function() return false end, help = "Customers place them at the counter" }
