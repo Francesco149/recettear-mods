@@ -146,7 +146,7 @@ function R.trip_line()
   if not d or d == game.time.HOME or game.time.dest(d) == 0 then return nil end   -- the box is right about the walk home
   local c = game.time.cost(d)
   if c.dungeon == 3 then
-    return "A dungeon run from here takes 3 periods: 2, and 1 for the stop you made" .. ends_day(3)
+    return "A dungeon run from here takes 3 periods" .. ends_day(3) .. ". 2 for the run, 1 for the stop you made"
   elseif c.dungeon then
     return "A dungeon run takes 2 periods" .. ends_day(2) .. ". A stop on the way back takes 1 more"
   elseif c.later == 1 then
@@ -154,17 +154,24 @@ function R.trip_line()
   end
   return "No extra time: the walk home already takes 1 period"
 end
+local TRIP_ORDER = { face = "Comic Sans MS", px = 15, weight = 900, top = 0xffffff, bottom = 0xffc0d8, edge_rgb = 0x2a0018, edge = 2, shadow = 2, fat = 1 }
 local TRIP = { face = "Comic Sans MS", px = 15, weight = 900, top = 0xffffff, bottom = 0xd8ecff, edge_rgb = 0x101828, edge = 2, shadow = 2, fat = 1 }
 ui.on_draw(function()
   local line = R.trip_line()
   if not line then return end
+  -- top middle of the map, a little in from the edge: one row per sentence (short rows stay clear of the clock and
+  -- gold HUD on the left at 4:3); an order due today goes on the row under them
+  local x, y = 344, 60
+  for part in (line .. ". "):gmatch("(.-)%. ") do
+    local l = ui.label(part, TRIP)
+    if l then ui.draw_label(l, x, y) else ui.text(x, y - 8, part, 0xff7f7f7f, 0.8, "c") end
+    y = y + 21
+  end
   local due = cfg.get("order_reminders") and game.orders.due(0)[1]
   if due then
-    local l = ui.label((due.days < 0 and "Order overdue: " or "Order due today: ") .. (due.name or "?") .. ", " .. due.qty .. " " .. (due.kind_name or "?"), TRIP)
-    if l then ui.draw_label(l, 320, 432) end
+    local o = ui.label((due.days < 0 and "Order overdue: " or "Order due today: ") .. (due.name or "?") .. ", " .. due.qty .. " " .. (due.kind_name or "?"), TRIP_ORDER)
+    if o then ui.draw_label(o, x, y + 3) end
   end
-  local l = ui.label(line, TRIP)
-  if l then ui.draw_label(l, 320, 456) else ui.text(320, 448, line, 0xff7f7f7f, 0.8, "c") end
 end, "map")
 
 -- ── 1.6 Buying or selling, while the price dial is up ──

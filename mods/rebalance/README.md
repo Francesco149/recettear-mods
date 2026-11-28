@@ -80,8 +80,8 @@ Each step is published here as it lands, with the rows it adds.
   haggle", "No deal", "More than they can pay") over a row of what it did, each in its own colour: "Reputation +2",
   "EXP +17", "Combo x1", "Combo x3 lost", "Out of patience". Everything on it is what the game computed; nothing is
   shown before you make the offer.
-- **Trip Time on the Map**: under the town map, what the place under the cursor really costs: "Free to enter. The
-  walk home will then take 1 period", "A dungeon run from here takes 3 periods: 2, and 1 for the stop you made".
+- **Trip Time on the Map**: at the top of the town map, what the place under the cursor really costs: "Free to enter. The
+  walk home will then take 1 period", "A dungeon run from here takes 3 periods. 2 for the run, 1 for the stop you made".
   With an order due today, its line shows there too.
 - **Order Reminders**: in the morning and when you load a save: "Order due today: Louie, 2 scarves" (also "due
   tomorrow").
