@@ -82,8 +82,10 @@ Each step is published here as it lands, with the rows it adds.
   shown before you make the offer.
 - **Trip Time on the Map**: at the top of the town map, what the place under the cursor really costs: "Free to enter. The
   walk home will then take 1 period", "A dungeon run from here takes 3 periods. 2 for the run, 1 for the stop you made".
-  With an order due today, its line shows there too.
-- **Order Reminders**: in the morning and when you load a save: "Order due today: Louie, 2 scarves" (also "due
+  - **Order Tracker**: while you have an order, the soonest one stays on screen, top right in the shop and on the town
+  map: "Order in 3 days: Louie, 2 scarves" (pink the day before, orange on the day). The pause menu's "Notebook" entry
+  has an "Orders" page listing all of them beside the customer ledger.
+- **Order Reminders**: a line in the morning and when you load a save: "Order due today: Louie, 2 scarves" (also "due
   tomorrow").
 - **Buy / Sell Banner**: "You are buying" or "You are selling" above the price dial, for shelf sales, requests,
   order pickups and customers selling to you.

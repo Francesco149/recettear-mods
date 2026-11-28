@@ -49,8 +49,8 @@ local function ledger_sync()          -- the page exists only while the row is o
     ledger.on_open = function(p) p.rows = R.ledger_rows() end
   end
   if ledger then ledger.hidden = not on end
+  if R.pages_sync then R.pages_sync() end
 end
-ledger_sync()
 
 -- ── 1.2 Deal history + 1.3 deal result line: the loader's on_deal event (one per price decision) ──
 -- History = a notebook of what you have seen happen, kept with the save (mod.store): per customer, deals where they
@@ -143,6 +143,27 @@ game.customers.on_deal(function(e)
   end
 end)
 
+-- ── 1.8 Order reminders: each morning (and when a save is loaded), what is due today and tomorrow ──
+-- An order is gone the moment the shop opens on its day, served or not, so the day it is due is the day to know.
+local function order_text(o) return ("%s, %d %s"):format(o.name or "?", o.qty or 0, o.kind_name or "?") end
+function R.reminders(orders)
+  local lines = {}
+  for _, o in ipairs(orders or game.orders.list()) do
+    if o.days < 0 then lines[#lines + 1] = "Order overdue: " .. order_text(o)
+    elseif o.days == 0 then lines[#lines + 1] = "Order due today: " .. order_text(o)
+    elseif o.days == 1 then lines[#lines + 1] = "Order due tomorrow: " .. order_text(o) end
+  end
+  return lines
+end
+local REMIND = { face = "Comic Sans MS", px = 16, weight = 900, top = 0xffffff, bottom = 0xffc0d8, edge_rgb = 0x2a0018, edge = 2, shadow = 2, fat = 1 }
+local function remind(orders)
+  if not cfg.get("order_reminders") then return end
+  R.last_reminders = R.reminders(orders)
+  for i, l in ipairs(R.last_reminders) do ui.toast(l, { id = "rebalance.order" .. i, y = 132, ticks = 480, style = REMIND }) end
+end
+game.orders.on_morning(remind)
+store.on_load(function(reason) if reason == "load" then remind() end end)
+
 -- ── 1.7 Time cost on the town map, before you commit ──
 -- The game's own box says "This action will not take any time" for every place, which is true of the door and not of
 -- the trip: a stop makes the walk home take a period, and a dungeon run takes two plus the stop you made before it.
@@ -174,12 +195,62 @@ ui.on_draw(function()
     if l then ui.draw_label(l, x, y) else ui.text(x, y - 8, part, 0xff7f7f7f, 0.8, "c") end
     y = y + 21
   end
-  local due = cfg.get("order_reminders") and game.orders.due(0)[1]
-  if due then
-    local o = ui.label((due.days < 0 and "Order overdue: " or "Order due today: ") .. (due.name or "?") .. ", " .. due.qty .. " " .. (due.kind_name or "?"), TRIP_ORDER)
-    if o then ui.draw_label(o, x, y + 3) end
-  end
 end, "map")
+
+-- ── 1.8b Order tracker: orders in progress stay on screen, and have a page in the pause menu ──
+-- The indicator sits top right in the shop (free roam and while the store is open; away during a customer's
+-- haggle, where the item's stats go) and on the town map: the soonest order and how many more there are.
+local function when(o)
+  return o.days < 0 and "overdue" or o.days == 0 and "today" or o.days == 1 and "tomorrow" or ("in " .. o.days .. " days")
+end
+function R.tracker_text()
+  if not cfg.get("order_tracker") then return nil end
+  local l = game.orders.list()
+  local o = l[1]
+  if not o then return nil end
+  return ("Order %s: %s, %d %s"):format(when(o), o.name or "?", o.qty or 0, o.kind_name or "?") .. (#l > 1 and ("  +" .. (#l - 1) .. " more") or ""), o.days
+end
+local TRACK = {
+  soon = { face = "Comic Sans MS", px = 14, weight = 900, top = 0xffffff, bottom = 0xffc0d8, edge_rgb = 0x2a0018, edge = 2, shadow = 2, fat = 1 },
+  due  = { face = "Comic Sans MS", px = 15, weight = 900, top = 0xfff6a0, bottom = 0xff7a3a, edge_rgb = 0x2a0c00, edge = 2, shadow = 2, fat = 1 },
+  far  = { face = "Comic Sans MS", px = 14, weight = 900, top = 0xffffff, bottom = 0xc9d4ff, edge_rgb = 0x14151c, edge = 2, shadow = 2, fat = 1 },
+}
+local function tracker_draw(y)
+  local text, days = R.tracker_text()
+  if not text then return end
+  local l = ui.label(text, days <= 0 and TRACK.due or days == 1 and TRACK.soon or TRACK.far)
+  if l then ui.draw_label(l, 632 - l.w / 2, y) end      -- right edge at 632
+end
+ui.on_draw(function()
+  if game.customers.active() or game.scene.dialog() then return end
+  tracker_draw(22)
+end)
+ui.on_draw(function() tracker_draw(22) end, "map")
+function R.order_rows()
+  local rows = {}
+  for _, o in ipairs(game.orders.list()) do
+    local w = when(o)
+    rows[#rows + 1] = { label = ("%s: %d %s"):format(o.name or "?", o.qty or 0, o.kind_name or "?"), order = o.index,
+                        value = function() return w end,
+                        help = o.days <= 0 and "They come for it when you open the store" or "Have it in stock by then" }
+  end
+  if #rows == 0 then
+    rows[1] = { label = "No orders", center = true, enabled = function() return false end, help = "Customers place them at the counter" }
+  end
+  return rows
+end
+local orders_page
+function R.pages_sync()            -- the pages exist only while their rows are on; two pages share one pause entry
+  local on = cfg.get("order_tracker") and true or false
+  if on and not orders_page then
+    orders_page = ui.page("pause", "Orders", {})
+    orders_page.width = 400
+    orders_page.on_open = function(p) p.rows = R.order_rows() end
+  end
+  if orders_page then orders_page.hidden = not on end
+  ui.pause_label = (on and cfg.get("ledger") ~= "off") and "Notebook" or nil
+end
+ledger_sync()
 
 -- ── 1.6 Buying or selling, while the price dial is up ──
 -- Every customer machine shows the dial in state 6 and its confirmation (Okay! / Start Again) in 15.  Kind 0 = the customer sells to you (you pay); 1 = a request
@@ -205,4 +276,4 @@ ui.on_draw(function()
   if l then ui.draw_label(l, 304, 216) else ui.text(304, 206, b[1], 0xff7f7f7f, 1, "c") end
 end)
 
-cfg.on_change(function(key) if key == "ledger" then ledger_sync() end end)
+cfg.on_change(function(key) if key == "ledger" or key == "order_tracker" then ledger_sync() end end)

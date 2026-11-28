@@ -58,6 +58,14 @@ label = "Order Reminders"
 description = "A morning line when an order is due today or tomorrow"
 preset_vanilla = false
 
+# 1.8b Order tracker
+[config.order_tracker]
+type = "bool"
+default = true
+label = "Order Tracker"
+description = "Orders in progress stay on screen; a pause-menu page lists them"
+preset_vanilla = false
+
 # 1.6 Buying or selling shown in large on the haggle screen
 [config.deal_banner]
 type = "bool"
