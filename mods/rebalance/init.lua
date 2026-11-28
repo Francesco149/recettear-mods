@@ -1,10 +1,11 @@
 -- rebalance — Rebalance + QoL (design: docs/mods/rebalance.md).  The mod holds policy and numbers; everything it
 -- needs from the engine is loader API (mod.config pages + presets, mod.store, pause-menu pages, mod.game.*).
 -- Built so far: 1.1 customer ledger, 1.2 deal history, 1.3 deal result line, 1.6 buying / selling banner,
--- 1.7 time cost on the town map, 1.8 order reminders.
+-- 1.7 time cost on the town map, 1.8 order reminders, 4.12 save protection.
 local ui, cfg, game, store = mod.ui.native, mod.config, mod.game, mod.store
-if not (ui and ui.toast and cfg.page and game.customers and game.customers.on_deal and game.orders and game.time) then
-  mod.log("needs loader API 1.13") return
+if not (ui and ui.toast and cfg.page and game.customers and game.customers.on_deal and game.orders and game.time
+        and game.save and game.save.on_picker) then
+  mod.log("needs loader API 1.14") return
 end
 local R = { cfg = cfg, store = store }
 _G.rebalance = R
@@ -315,5 +316,26 @@ ui.on_draw(function()
   local l = ui.label(b[1], b[2])
   if l then ui.draw_label(l, 304, 216) else ui.text(304, 206, b[1], 0xff7f7f7f, 1, "c") end
 end)
+
+-- ── 4.12 Save protection: the save pickers never start on another game's slot, and say so before writing over one ──
+-- Retail starts the pause Save page on the last slot used (after New Game / New Game + / Survival: the game you came
+-- from) and the ending's picker on file 001; its "Overwriting file" box is the same for your own game and another.
+-- "This game" = the slots it was loaded from or saved into, or whose mod data names it (mod.game.save.run).
+function R.save_pick(e)
+  if not cfg.get("save_protection") then return nil end
+  local S = game.save
+  if e.where == "ending" then return S.free() end          -- keep the save you made before the ending
+  local own = e.run and e.run.slot
+  if own then return own ~= e.cursor and own or nil end
+  return S.free()                                         -- a game not saved yet: the first empty file
+end
+function R.overwrite_box(e)
+  if not cfg.get("save_protection") or e.same_run then return nil end
+  local day = e.bank and e.bank.day
+  return { text = ("File %03d holds another game%s.\nOverwrite it?"):format(e.slot + 1,
+                   day and day >= 0 and (" (Day %d)"):format(day + 1) or ""), no = true }
+end
+game.save.on_picker(R.save_pick)
+game.save.on_overwrite(R.overwrite_box)
 
 cfg.on_change(function(key) if key == "ledger" or key == "order_tracker" then ledger_sync() end end)

@@ -6,7 +6,7 @@ switch on an in-game Options page. Saves stay loadable by the unmodded game.
 
 **The information rows are in** (version 0.2.0, in this repository; it needs the next mod loader release): the settings
 page with presets, the customer ledger with deal history, the deal result line, the trip time on the town map,
-order reminders and the buying / selling banner. This page tracks what is being built and why. The full design, with every
+order reminders, the buying / selling banner and save protection. This page tracks what is being built and why. The full design, with every
 row and its default, is in [the design draft](../../docs/mods/rebalance.md).
 
 ## Tell us what you think
@@ -59,7 +59,8 @@ voices. Nothing in the mod shows you the accepted price before you make an offer
 | Settings page with presets, per-save mod data, pause-menu pages (loader) | done |
 | Classic+ : customer ledger (pause menu → Customers), buying / selling banner | done (0.1.0) |
 | Classic+ : deal result line, deal history, trip time on the town map, order reminders | done (0.2.0) |
-| Classic+ : honest tutorial lines, over-budget hint, news away from the shop, numbers on items, save protection | next |
+| Classic+ : save protection | done (0.2.0) |
+| Classic+ : honest tutorial lines, over-budget hint, news away from the shop, numbers on items | next |
 | Rebalanced: combo, late orders, gear, scene skipping, companions | not started |
 | Options: debt, extension, completion odds, expeditions | not started |
 | Dungeon features from the HD Edition | not started |
@@ -82,7 +83,7 @@ Each step is published here as it lands, with the rows it adds.
   shown before you make the offer.
 - **Trip Time on the Map**: at the top of the town map, what the place under the cursor really costs: "Free to enter. The
   walk home will then take 1 period", "A dungeon run from here takes 3 periods. 2 for the run, 1 for the stop you made".
-  - **Order Tracker**: while you have orders, a short list stays in the top right corner of the shop and the town map:
+- **Order Tracker**: while you have orders, a short list stays in the top right corner of the shop and the town map:
   the two soonest by name ("Today: Louie", "In 2 days: Woman"; orange on the day, pink the day before) and a pointer
   to the full list, the "Orders" page under the pause menu's "Notebook" entry (beside the customer ledger). Once you
   open the store on the day it reads "Coming in today" until that customer has been.
@@ -90,6 +91,11 @@ Each step is published here as it lands, with the rows it adds.
   tomorrow").
 - **Buy / Sell Banner**: "You are buying" or "You are selling" above the price dial, for shelf sales, requests,
   order pickups and customers selling to you.
+- **Save Protection**: the save screen starts on this game's file, or on the first empty file if this game has not
+  been saved yet (the game itself starts on the file you used last, which after New Game, New Game + or Survival is
+  the game you came from) and after the ending (where the game starts on file 001, keeping your pre-ending save
+  safe). Choosing a file that holds another game asks "File 006 holds another game (Day 2). Overwrite it?" with the
+  cursor on No; your own game's file gets the game's usual question.
 
 One thing we learned while measuring: the combo counts deals accepted on your **first offer**, whatever the price
 (it is not only for "Just" prices). Any customer who haggles back or leaves without a deal ends it.

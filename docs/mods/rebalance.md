@@ -1,6 +1,6 @@
 # Rebalance + QoL (working title) — design draft for feedback
 
-**Status: draft; 1.1, 1.2, 1.3, 1.6, 1.7 and 1.8 are built (mod 0.2.0), the rest is not.** This is a proposal for a mod for the original PC Recettear (Steam
+**Status: draft; 1.1, 1.2, 1.3, 1.6, 1.7, 1.8 and 4.12 are built (mod 0.2.0), the rest is not.** This is a proposal for a mod for the original PC Recettear (Steam
 EN 1.108) running on [recettear-mod-loader](https://github.com/Francesco149/recettear-mod-loader). Tell us
 what you would turn on, what you would never touch, and what is missing: open an issue on this repo.
 Short version and progress: [mods/rebalance](../../mods/rebalance/README.md).
@@ -98,7 +98,7 @@ first-class choice at New Game.
 | 4.9 | **Use a healing item at once** from the bag, without the menu (HD Edition). | ○ | 3 |
 | 4.10 | **Kinder completion.** The most repeated complaint in the Japanese thread: the item book from 95 % on is pure luck. Drop and chest odds ×1 / ×2 / ×3 for items you have never found; nothing changes for items you already have, so it is no money engine. | ○ ×1 | 3 |
 | 4.11 | **Shorter expeditions**: a dungeon trip costs 1 period instead of 2. For players who say the dungeon is a trap while in debt because two periods of selling earn far more. Disputed: others like that it is a real choice. | ○ | 2 |
-| 4.12 | **Save protection**: New Game, New Game + and Survival ask before writing over a slot that holds another run, and never pick an occupied slot by themselves. Lost main saves come up again and again. | C | 2 |
+| 4.12 | **Save protection**: the save screen starts on this game's file, or on the first empty file for a game not saved yet (the game starts on the file you last used: after New Game, New Game + or Survival that is your main save) and after the ending (the game starts on file 001). Writing over a file that holds another game says so ("File 006 holds another game (Day 2)") and starts on No. Lost main saves come up again and again. | C | 2 |
 
 Not planned: more enemy types, new dungeons, hitbox changes, an auto-sell clerk. Feedback on falling-rock
 traps, on leaving only every 5 floors and on fusion recipes that need three of a rare item is noted; say
@@ -179,6 +179,7 @@ are in openrecet `docs/findings/`, new facts get recorded there):
 | `mod.game.events` | Seen flags per script, `on_start` (skippable) | 3.3 |
 | `mod.game.dungeon` additions | `on_floor`, `on_defeat{keep}` (editable), `on_boss_kill`, drops list, follower visibility | 4.1–4.6 |
 | `mod.game.adventurers` | Stat and move records, equipment compare hook, run counts | 2.3, 2.4, 3.4, 4.7 |
+| `mod.game.save` ✅ additions | `run()` (which game this is, kept beside each save), `on_picker` (where a save screen starts), `on_overwrite` (the overwrite question's text + default) | 4.12 |
 | `mod.game.save.autosave(slot)` | Retail's own save into a reserved slot | 4.8 |
 | `mod.game.guild` / `shop` acts | Menu entries at the guilds, discard, shop tier change through retail's re-layout | 2.4, 2.7, 2.9, 4.5 |
 

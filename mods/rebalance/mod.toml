@@ -2,12 +2,12 @@
 id = "rebalance"
 name = "Rebalance + QoL"
 version = "0.2.0"
-description = "Explains the rules the game hides and removes friction that isn't a decision; balance options are off unless you pick them. In development: this version has the customer ledger with deal history (pause menu), the deal result line and the buying / selling banner. Every change is a row on its own Options page. Saves stay vanilla."
+description = "Explains the rules the game hides and removes friction that isn't a decision; balance options are off unless you pick them. In development: this version has the customer ledger with deal history (pause menu), the deal result line, trip times on the town map, order reminders, the buying / selling banner and save protection. Every change is a row on its own Options page. Saves stay vanilla."
 authors = ["openrecet"]
 target_games = ["recettear_steam_en_1108"]
 
 [loader]
-api = "1.13"
+api = "1.14"
 
 # Presets (docs/mods/rebalance.md): Classic+ = information and fixes only, no simulation number changes;
 # Rebalanced = Classic+ and the friction fixes.  The rows built so far are information only, so the two agree.
@@ -64,6 +64,14 @@ type = "bool"
 default = true
 label = "Order Tracker"
 description = "Orders in progress stay on screen; a pause-menu page lists them"
+preset_vanilla = false
+
+# 4.12 Save protection
+[config.save_protection]
+type = "bool"
+default = true
+label = "Save Protection"
+description = "Saving starts on this game's file or an empty one; a warning before writing over another game"
 preset_vanilla = false
 
 # 1.6 Buying or selling shown in large on the haggle screen
