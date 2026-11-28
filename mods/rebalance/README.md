@@ -76,7 +76,7 @@ Each step is published here as it lands, with the rows it adds.
   each customer can pay now and at level 10.
 - **Deal History**: the ledger's line under each customer notes what you have seen them accept: the best and the
   last price they paid you (as % of the base price) and the lowest they sold to you for. Kept with the save.
-- **Deal Result Line**: after each offer, a headline above the shop ("Just price!", "Near pin!", "Deal", "They
+- **Deal Result Line**: after each offer, a headline where the buying / selling banner was ("Just price!", "Near pin!", "Deal", "They
   haggle", "No deal", "More than they can pay") over a row of what it did, each in its own colour: "Reputation +2",
   "EXP +17", "Combo x1", "Combo x3 lost", "Out of patience". Everything on it is what the game computed; nothing is
   shown before you make the offer.

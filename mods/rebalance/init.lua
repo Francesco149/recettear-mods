@@ -124,15 +124,22 @@ function R.deal_line(e)            -- the same as plain text (log, tests)
   for i, p in ipairs(d) do t[i] = p[1] end
   return head[1] .. (#t > 0 and (": " .. table.concat(t, ", ")) or "")
 end
+-- Where: the spot the buying / selling banner uses (between the Base Price plate and the bubble) — the dial is away
+-- while the customer answers, so it is free, and nothing covers the item's picture.  The rows leave when the dial
+-- (and the banner) comes back.
+local DEAL_X, DEAL_Y = 304, 212
+function R.show_deal(e, ticks)
+  local head, d = R.deal_parts(e)
+  R.deal_toasts = { ui.toast({ head }, { id = "rebalance.deal", x = DEAL_X, y = DEAL_Y, ticks = ticks or 240 }) }
+  if #d > 0 then R.deal_toasts[2] = ui.toast(d, { id = "rebalance.deal2", x = DEAL_X, y = DEAL_Y + 24, ticks = ticks or 240, gap = 6 })
+  else ui.toast("", { id = "rebalance.deal2", ticks = 0 }) end
+end
 game.customers.on_deal(function(e)
   R.last_deal = e
   remember(e)
   if cfg.get("deal_line") then
     R.last_line = R.deal_line(e)
-    local head, d = R.deal_parts(e)
-    ui.toast({ head }, { id = "rebalance.deal", y = 92, ticks = 240 })
-    if #d > 0 then ui.toast(d, { id = "rebalance.deal2", y = 92 + 26, ticks = 240, gap = 6 })
-    else ui.toast("", { id = "rebalance.deal2", ticks = 0 }) end
+    R.show_deal(e)
   end
 end)
 
@@ -193,6 +200,7 @@ end
 ui.on_draw(function()
   local b = R.banner()
   if not b then return end
+  if R.deal_toasts then for _, t in ipairs(R.deal_toasts) do t.ticks = 0 end R.deal_toasts = nil end
   local l = ui.label(b[1], b[2])
   if l then ui.draw_label(l, 304, 216) else ui.text(304, 206, b[1], 0xff7f7f7f, 1, "c") end
 end)
