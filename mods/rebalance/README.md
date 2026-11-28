@@ -74,8 +74,8 @@ Each step is published here as it lands, with the rows it adds.
   reputation level 0–10 and the points toward the next level (a deal gives +5, +2 or +1 by how close your price was to
   what they had in mind; a refusal or a third offer costs 1). Set the row to "Rep. + Budget" to also see what
   each customer can pay now and at level 10.
-- **Deal History**: the ledger's line under each customer notes what you have seen them accept: the best and the
-  last price they paid you (as % of the base price) and the lowest they sold to you for. Kept with the save.
+- **Deal History**: under the ledger's list, the selected customer's card notes what you have seen them accept, one
+  fact per line: "Paid you: up to 132%, last 118% (4 deals)", "Sold to you: from 55% (2 deals)". Kept with the save.
 - **Deal Result Line**: after each offer, a headline where the buying / selling banner was ("Just price!", "Near pin!", "Deal", "They
   haggle", "No deal", "More than they can pay") over a row of what it did, each in its own colour: "Reputation +2",
   "EXP +17", "Combo x1", "Combo x3 lost", "Out of patience". Everything on it is what the game computed; nothing is

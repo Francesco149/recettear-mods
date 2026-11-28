@@ -6,7 +6,7 @@ local ui, cfg, game, store = mod.ui.native, mod.config, mod.game, mod.store
 if not (ui and ui.toast and cfg.page and game.customers and game.customers.on_deal and game.orders and game.time) then
   mod.log("needs loader API 1.13") return
 end
-local R = { cfg = cfg }
+local R = { cfg = cfg, store = store }
 _G.rebalance = R
 
 cfg.page{ title = "Rebalance + QoL", width = 400 }
@@ -26,11 +26,11 @@ function R.ledger_rows()
   for _, c in ipairs(game.customers.roster()) do
     if c.points > 0 or c.hearts > 0 then
       local rep = c.level >= 10 and "Lv 10 (max)" or ("Lv %d  %d/10"):format(c.level, c.points % 10)
-      local help = full and ("Pays up to %s pix now, %s at Lv 10"):format(commas(c.budget), commas(c.budget_hi))
+      local help = full and ("Budget: %s pix (%s at Lv 10)"):format(commas(c.budget), commas(c.budget_hi))
                or (c.level >= 10 and "As loyal as they get" or ("%d more point%s to Lv %d"):format(c.to_next, c.to_next == 1 and "" or "s", c.level + 1))
-      local h = R.history_line(c.id)
-      rows[#rows + 1] = { label = c.name, customer = c.id, value = function() return rep end,
-                          help = h and (h .. "  |  " .. help) or help }
+      local lines = { help }                   -- under the list: one fact per line
+      for _, l in ipairs(R.history_lines(c.id)) do lines[#lines + 1] = l end
+      rows[#rows + 1] = { label = c.name, customer = c.id, value = function() return rep end, help = lines }
     end
   end
   table.sort(rows, function(a, b) return a.customer < b.customer end)
@@ -46,6 +46,7 @@ local function ledger_sync()          -- the page exists only while the row is o
   if on and not ledger then
     ledger = ui.page("pause", "Customers", {})
     ledger.width = 400
+    ledger.visible = 4                 -- four customers at a time: the space under them is the selected one's card
     ledger.on_open = function(p) p.rows = R.ledger_rows() end
   end
   if ledger then ledger.hidden = not on end
@@ -57,14 +58,17 @@ end
 -- paid you (count, best and last price as % of base) and deals where you paid them (count, lowest %).
 local function pct(e) return e.base and e.base > 0 and math.floor(e.price * 100 / e.base + 0.5) or 0 end
 function R.history(id) return (store.get("deals") or {})["c" .. id] end
-function R.history_line(id)
-  if not cfg.get("deal_history") then return nil end
+function R.history_lines(id)       -- what you have seen this customer accept, one fact per line
+  if not cfg.get("deal_history") then return {} end
   local h = R.history(id)
-  if not h then return nil end
   local t = {}
-  if (h.sold or 0) > 0 then t[#t + 1] = ("Paid you up to %d%%, last %d%% (%d)"):format(h.best, h.last, h.sold) end
-  if (h.bought or 0) > 0 then t[#t + 1] = ("sold to you from %d%% (%d)"):format(h.low, h.bought) end
-  return #t > 0 and table.concat(t, ", ") or nil
+  local function deals(n) return n == 1 and "1 deal" or (n .. " deals") end
+  if h and (h.sold or 0) > 0 then
+    t[#t + 1] = h.sold == 1 and ("Paid you: %d%% of base (1 deal)"):format(h.last)
+                or ("Paid you: up to %d%%, last %d%% (%s)"):format(h.best, h.last, deals(h.sold))
+  end
+  if h and (h.bought or 0) > 0 then t[#t + 1] = ("Sold to you: from %d%% (%s)"):format(h.low, deals(h.bought)) end
+  return t
 end
 local function remember(e)
   if e.outcome ~= "accept" or e.scripted or not store.active() then return end
@@ -223,11 +227,29 @@ function R.tracker_lines()
   if #l > 0 then lines[#lines + 1] = { text = (#l > 2 and ("+" .. (#l - 2) .. " more, ") or "") .. "Pause: Notebook", hint = true } end
   return lines
 end
+-- rml.log says what the tracker saw whenever its list changes: the lines, the raw slots, this session's queue
+local last_dump
+local function tracker_dump(lines)
+  local t = {}
+  for _, l in ipairs(lines) do t[#t + 1] = l.text end
+  local key = table.concat(t, " / ")
+  if key == last_dump then return end
+  last_dump = key
+  local sl, q = {}, {}
+  for i = 0, 9 do
+    local o = game.orders.get(i)
+    if o and (o.active or (o.qty or 0) ~= 0) then sl[#sl + 1] = ("%d:%s %s x%d d%d %s"):format(i, o.active and "on" or "off", tostring(o.name), o.qty or 0, o.days or 0, tostring(o.kind_name)) end
+  end
+  for _, e in ipairs(game.customers.queue()) do q[#q + 1] = ("%d k%d i%d x%d d%d"):format(e.customer or -1, e.kind or -1, e.item or -1, e.qty or 0, e.days or 0) end
+  mod.log(("[orders] day %s period %s mode %s served %s | shown: %s | slots: %s | queue: %s"):format(tostring(game.calendar.day()), tostring(game.time.period()),
+          tostring(game.scene.mode()), tostring(game.customers.served()), key, table.concat(sl, "; "), table.concat(q, "; ")))
+end
 local function tk(px, top, bottom, edge) return { face = "Comic Sans MS", px = px, weight = 900, top = top, bottom = bottom, edge_rgb = edge, edge = 2, shadow = 2, fat = 1 } end
 local TRACK = { due = tk(14, 0xfff6a0, 0xff7a3a, 0x2a0c00), soon = tk(14, 0xffffff, 0xffc0d8, 0x2a0018), far = tk(14, 0xffffff, 0xc9d4ff, 0x14151c),
                 hint = tk(11, 0xffffff, 0xc4c9d8, 0x14151c) }
 local function tracker_draw()
   local lines = R.tracker_lines()
+  tracker_dump(lines)
   if #lines == 0 then return end
   ui.anchored("R", function()
     local y = 14
