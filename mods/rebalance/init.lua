@@ -82,59 +82,59 @@ local function remember(e)
   all["c" .. e.customer] = h
   store.set("deals", all)
 end
--- The line: what the game computed and shows only as a heart now and then.
+-- The result: what the game computed and shows only as a heart now and then.  A headline (what happened) over a
+-- row of numbers, each in its own colour: reputation pink, EXP yellow like the game's own EXP rows, combo orange.
 local function signed(n) return (n >= 0 and "+" or "-") .. math.abs(n) end
-function R.deal_line(e)
-  local t = {}
-  if e.outcome == "accept" then
-    t[1] = e.grade == 1 and "Just price!" or e.grade == 2 and "Near pin!" or "Deal"
-    if not e.scripted then
-      t[#t + 1] = "Reputation " .. signed(e.rep) .. (e.third_round and " (third offer -1)" or "") .. (e.level_up and ", level up" or "")
+local function st(px, top, bottom, edge)
+  return { face = "Comic Sans MS", px = px, weight = 900, top = top, bottom = bottom, edge_rgb = edge, edge = 2, shadow = 2, fat = 1 }
+end
+local DEAL = {
+  just = st(24, 0xfff6a0, 0xff9a1a, 0x2a0c00), near = st(22, 0xffffff, 0xffd060, 0x2a0c00), deal = st(20, 0xffffff, 0xcfe8b0, 0x0c1c06),
+  bad  = st(20, 0xffffff, 0xb9c6ff, 0x14151c),
+  rep  = st(15, 0xffe6f0, 0xff8fb8, 0x2a0018), rep_down = st(15, 0xe6e9ff, 0x8f9bd8, 0x10142a),
+  xp   = st(15, 0xfffbd0, 0xffd21a, 0x2a1a00), combo = st(15, 0xffe9c0, 0xff8c1a, 0x2a0c00), note = st(15, 0xffffff, 0xc4c9d8, 0x14151c),
+}
+-- → headline {text, style}, details { {text, style}, … }
+function R.deal_parts(e)
+  local head, d = nil, {}
+  local function rep()
+    if e.rep ~= 0 or e.outcome == "accept" then
+      d[#d + 1] = { "Reputation " .. signed(e.rep) .. (e.third_round and " (third offer)" or ""), e.rep < 0 and DEAL.rep_down or DEAL.rep }
     end
+  end
+  if e.outcome == "accept" then
+    head = e.grade == 1 and { "Just price!", DEAL.just } or e.grade == 2 and { "Near pin!", DEAL.near } or { "Deal", DEAL.deal }
+    if not e.scripted then rep() end
+    if e.level_up then d[#d + 1] = { "Level up", DEAL.rep } end
     if e.xp then
-      t[#t + 1] = "EXP +" .. e.xp.total .. (e.xp.combo and (" (combo " .. e.combo .. ": +" .. e.xp.combo .. ")") or "")
+      d[#d + 1] = { "EXP +" .. e.xp.total, DEAL.xp }
+      if e.xp.combo then d[#d + 1] = { "Combo x" .. e.combo, DEAL.combo } end
     end
   else
-    t[1] = e.outcome == "walk_out" and "No deal" or e.outcome == "over_budget" and "More than they can pay" or "They haggle"
-    if e.rep ~= 0 then t[#t + 1] = "Reputation " .. signed(e.rep) .. (e.third_round and " (third offer)" or "") end
-    if (e.combo_lost or 0) > 0 then t[#t + 1] = "combo " .. e.combo_lost .. " lost" end
-    if e.leaving and e.outcome ~= "walk_out" then t[#t + 1] = "out of patience" end
+    head = { e.outcome == "walk_out" and "No deal" or e.outcome == "over_budget" and "More than they can pay" or "They haggle", DEAL.bad }
+    rep()
+    if (e.combo_lost or 0) > 0 then d[#d + 1] = { "Combo x" .. e.combo_lost .. " lost", DEAL.note } end
+    if e.leaving and e.outcome ~= "walk_out" then d[#d + 1] = { "Out of patience", DEAL.note } end
   end
-  return table.concat(t, "  |  ")
+  return head, d
 end
-local LINE = {
-  good = { face = "Comic Sans MS", px = 16, weight = 900, top = 0xffffff, bottom = 0xffe08a, edge_rgb = 0x2a0c00, edge = 2, shadow = 2, fat = 1 },
-  bad  = { face = "Comic Sans MS", px = 16, weight = 900, top = 0xffffff, bottom = 0xb9c6ff, edge_rgb = 0x14151c, edge = 2, shadow = 2, fat = 1 },
-}
+function R.deal_line(e)            -- the same as plain text (log, tests)
+  local head, d = R.deal_parts(e)
+  local t = {}
+  for i, p in ipairs(d) do t[i] = p[1] end
+  return head[1] .. (#t > 0 and (": " .. table.concat(t, ", ")) or "")
+end
 game.customers.on_deal(function(e)
   R.last_deal = e
   remember(e)
   if cfg.get("deal_line") then
     R.last_line = R.deal_line(e)
-    ui.toast(R.last_line, { id = "rebalance.deal", y = 96, ticks = 240, style = e.outcome == "accept" and LINE.good or LINE.bad })
+    local head, d = R.deal_parts(e)
+    ui.toast({ head }, { id = "rebalance.deal", y = 92, ticks = 240 })
+    if #d > 0 then ui.toast(d, { id = "rebalance.deal2", y = 92 + 26, ticks = 240, gap = 6 })
+    else ui.toast("", { id = "rebalance.deal2", ticks = 0 }) end
   end
 end)
-
--- ── 1.8 Order reminders: each morning (and when a save is loaded), what is due today and tomorrow ──
--- An order is gone the moment the shop opens on its day, served or not, so the day it is due is the day to know.
-local function order_text(o) return ("%s, %d %s"):format(o.name or "?", o.qty or 0, o.kind_name or "?") end
-function R.reminders(orders)
-  local lines = {}
-  for _, o in ipairs(orders or game.orders.list()) do
-    if o.days < 0 then lines[#lines + 1] = "Order overdue: " .. order_text(o)
-    elseif o.days == 0 then lines[#lines + 1] = "Order due today: " .. order_text(o)
-    elseif o.days == 1 then lines[#lines + 1] = "Order due tomorrow: " .. order_text(o) end
-  end
-  return lines
-end
-local REMIND = { face = "Comic Sans MS", px = 16, weight = 900, top = 0xffffff, bottom = 0xffc0d8, edge_rgb = 0x2a0018, edge = 2, shadow = 2, fat = 1 }
-local function remind(orders)
-  if not cfg.get("order_reminders") then return end
-  R.last_reminders = R.reminders(orders)
-  for i, l in ipairs(R.last_reminders) do ui.toast(l, { id = "rebalance.order" .. i, y = 132, ticks = 480, style = REMIND }) end
-end
-game.orders.on_morning(remind)
-store.on_load(function(reason) if reason == "load" then remind() end end)
 
 -- ── 1.7 Time cost on the town map, before you commit ──
 -- The game's own box says "This action will not take any time" for every place, which is true of the door and not of

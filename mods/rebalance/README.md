@@ -76,9 +76,10 @@ Each step is published here as it lands, with the rows it adds.
   each customer can pay now and at level 10.
 - **Deal History**: the ledger's line under each customer notes what you have seen them accept: the best and the
   last price they paid you (as % of the base price) and the lowest they sold to you for. Kept with the save.
-- **Deal Result Line**: after each offer, one line above the shop: "Near pin! | Reputation +2 | EXP +17 (combo 1: +2)",
-  "They haggle | combo 3 lost", "More than they can pay | Reputation -1 (third offer)". Everything on it is what the
-  game computed; nothing is shown before you make the offer.
+- **Deal Result Line**: after each offer, a headline above the shop ("Just price!", "Near pin!", "Deal", "They
+  haggle", "No deal", "More than they can pay") over a row of what it did, each in its own colour: "Reputation +2",
+  "EXP +17", "Combo x1", "Combo x3 lost", "Out of patience". Everything on it is what the game computed; nothing is
+  shown before you make the offer.
 - **Trip Time on the Map**: under the town map, what the place under the cursor really costs: "Free to enter. The
   walk home will then take 1 period", "A dungeon run from here takes 3 periods: 2, and 1 for the stop you made".
   With an order due today, its line shows there too.
