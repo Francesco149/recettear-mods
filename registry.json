@@ -110,6 +110,47 @@
       ]
     },
     {
+      "id": "rebalance",
+      "name": "Rebalance + QoL",
+      "description": "Explains the rules the game hides and removes friction that isn't a decision; balance options are off unless you pick them. In development: this version has the customer ledger with deal history (pause menu), the deal result line, trip times on the town map, order reminders, the buying / selling banner and save protection. Every change is a row on its own Options page. Saves stay vanilla.",
+      "keywords": [],
+      "target_games": [
+        "recettear_steam_en_1108"
+      ],
+      "versions": [
+        {
+          "version": "0.2.0",
+          "released": "2026-11-28",
+          "notes": "In development, feedback wanted. Information only, nothing in the simulation changes: an Options page with presets (Rebalanced / Classic+ / Off) and one row per change; a customer ledger in the pause menu (reputation level and points, optional budgets) with the prices each customer has accepted from you; a result line after each offer (reputation, EXP, combo, and why); what a trip really costs on the town map; order reminders and an order tracker; a buying / selling banner on the price dial; save protection (save screens start on this game's file or an empty one, and warn before writing over another game).",
+          "min_loader": "0.2.0",
+          "requires": {},
+          "files": [
+            {
+              "kind": "download",
+              "dest": "mods/rebalance/README.md",
+              "url": "https://raw.githubusercontent.com/Francesco149/recettear-mods/rebalance-0.2.0/mods/rebalance/README.md",
+              "sha256": "395f013901b35e74cf5e3102179918db2da4fb85303dec06ac3060a0fb125bea",
+              "size": 8239
+            },
+            {
+              "kind": "download",
+              "dest": "mods/rebalance/init.lua",
+              "url": "https://raw.githubusercontent.com/Francesco149/recettear-mods/rebalance-0.2.0/mods/rebalance/init.lua",
+              "sha256": "d4f98fc3acf39e9a997e56ed23f9c3078105be82a8975b2a1f98ccddca1bff1e",
+              "size": 18395
+            },
+            {
+              "kind": "download",
+              "dest": "mods/rebalance/mod.toml",
+              "url": "https://raw.githubusercontent.com/Francesco149/recettear-mods/rebalance-0.2.0/mods/rebalance/mod.toml",
+              "sha256": "8e67bec9d02077e72fb8c1909bb88b4dfe44b3996e2fba62c353e515ea21685b",
+              "size": 2578
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "unlock-menu",
       "name": "Unlock Menu",
       "description": "The full title menu whatever the saves hold: all 8 entries; NEW GAME + and SURVIVAL MODE from any slot (an empty slot = a fresh start). Writes nothing to save.dat.",

@@ -33,5 +33,12 @@
       "min_loader": "0.1.0",
       "notes": "Recolour Recette (hair, eyes, clothes: 10 regions) from an Options page: presets or per-region colours, live preview. Works on your own game files at load time; nothing is written to the game folder."
     }
+  },
+  "rebalance": {
+    "0.2.0": {
+      "released": "2026-11-28",
+      "min_loader": "0.2.0",
+      "notes": "In development, feedback wanted. Information only, nothing in the simulation changes: an Options page with presets (Rebalanced / Classic+ / Off) and one row per change; a customer ledger in the pause menu (reputation level and points, optional budgets) with the prices each customer has accepted from you; a result line after each offer (reputation, EXP, combo, and why); what a trip really costs on the town map; order reminders and an order tracker; a buying / selling banner on the price dial; save protection (save screens start on this game's file or an empty one, and warn before writing over another game)."
+    }
   }
 }

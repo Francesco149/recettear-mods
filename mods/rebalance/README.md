@@ -4,7 +4,7 @@ A mod for the original PC *Recettear* that explains the rules the game hides, re
 real decision, and offers balance options that are off unless you pick them. Every change is its own
 switch on an in-game Options page. Saves stay loadable by the unmodded game.
 
-**The information rows are in** (version 0.2.0, in this repository; it needs the next mod loader release): the settings
+**The information rows are in** (version 0.2.0; needs mod loader 0.2.0 — install it from the launcher's Browse tab): the settings
 page with presets, the customer ledger with deal history, the deal result line, the trip time on the town map,
 order reminders, the buying / selling banner and save protection. This page tracks what is being built and why. The full design, with every
 row and its default, is in [the design draft](../../docs/mods/rebalance.md).
